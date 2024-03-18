@@ -4,9 +4,8 @@
 
 void ConsumirComentarios()
 {
-    // TODO: sólo funciona hasta 80 caracteres
-    char buf[80];
-    while (scanf("c %80[^\n]\n", buf) == 1)
+    char c;
+    while (scanf("c %*[^\n]%1[\n]", &c) == 1)
         ;
 }
 
