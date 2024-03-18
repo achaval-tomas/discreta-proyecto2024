@@ -1,4 +1,4 @@
-FILES=main.c Grafo.c
+FILES=main.c Grafo.c Vertice.c
 
 COMMON_ARGS=-Wall -Werror -std=c99
 DEBUG_ARGS=-g
