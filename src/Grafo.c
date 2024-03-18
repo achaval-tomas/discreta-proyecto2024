@@ -93,3 +93,18 @@ void DestruirGrafo(Grafo g)
     free(g->vertices);
     free(g);
 }
+
+u32 NumeroDeVertices(Grafo g)
+{
+    return g->num_vertices;
+}
+
+u32 NumeroDeLados(Grafo g)
+{
+    return g->num_lados;
+}
+
+u32 Delta(Grafo g)
+{
+    return g->delta;
+}

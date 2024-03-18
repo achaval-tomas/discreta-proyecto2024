@@ -3,7 +3,7 @@
 
 void ImprimirGrafo(Grafo g)
 {
-    printf("n: %u, m: %u, delta: %u\n", g->num_vertices, g->num_lados, g->delta);
+    printf("n: %u, m: %u, delta: %u\n", NumeroDeVertices(g), NumeroDeLados(g), Delta(g));
 
     for (u32 i = 0; i < g->num_vertices; i++) {
         VerticeSt* v = &g->vertices[i];
