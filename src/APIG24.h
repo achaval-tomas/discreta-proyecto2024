@@ -32,7 +32,7 @@ u32 NumeroDeLados(Grafo G);
 u32 Delta(Grafo G);
 
 
-//funciones de extraccion de informacion de vertices 
+//funciones de extraccion de informacion de vertices
 
 
 u32 Grado(u32 i,Grafo G);

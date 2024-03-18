@@ -1,16 +1,35 @@
-COMMON_ARGS=-Wall -Werror -std=c99
 FILES=main.c Grafo.c
 
-main: ${FILES}
-	gcc ${COMMON_ARGS} -g -o main ${FILES}
+COMMON_ARGS=-Wall -Werror -std=c99
+DEBUG_ARGS=-g
+RELEASE_ARGS=-O3
 
-build: main
+SOURCES=$(patsubst %, src/%, $(FILES))
 
-main_rel: ${FILES}
-	gcc ${COMMON_ARGS} -O3 -o main ${FILES}
+EXECUTABLE_NAME=main
+BUILD_DIR=build
 
-run: main
-	./main < K5.txt
+DEBUG_DIR=${BUILD_DIR}/debug
+RELEASE_DIR=${BUILD_DIR}/release
 
-release: main_rel
-	./main
+DEBUG_EXECUTABLE=${DEBUG_DIR}/${EXECUTABLE_NAME}
+RELEASE_EXECUTABLE=${RELEASE_DIR}/${EXECUTABLE_NAME}
+
+${DEBUG_EXECUTABLE}: ${SOURCES}
+	@mkdir -p $(@D)
+	gcc ${COMMON_ARGS} ${DEBUG_ARGS} -o ${DEBUG_EXECUTABLE} ${SOURCES}
+
+${RELEASE_EXECUTABLE}: ${SOURCES}
+	@mkdir -p $(@D)
+	gcc ${COMMON_ARGS} ${RELEASE_ARGS} -o ${RELEASE_EXECUTABLE} ${SOURCES}
+
+build: ${DEBUG_EXECUTABLE}
+
+run: ${DEBUG_EXECUTABLE}
+	./${DEBUG_EXECUTABLE} < K5.txt
+
+release: ${RELEASE_EXECUTABLE}
+	./${RELEASE_EXECUTABLE} < K5.txt
+
+clean:
+	rm -rf ./${BUILD_DIR}
