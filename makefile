@@ -1,7 +1,7 @@
 FILES=main.c Grafo.c
 
 COMMON_ARGS=-Wall -Werror -std=c99
-DEBUG_ARGS=-g
+DEBUG_ARGS=-g -fsanitize=address
 RELEASE_ARGS=-O3
 
 SOURCES=$(patsubst %, src/%, $(FILES))
@@ -25,11 +25,14 @@ ${RELEASE_EXECUTABLE}: ${SOURCES}
 
 build: ${DEBUG_EXECUTABLE}
 
+# Se puede cambiar el archivo usando 'make run i=grafo.txt'
+i=K5.txt
+
 run: ${DEBUG_EXECUTABLE}
-	./${DEBUG_EXECUTABLE} < K5.txt
+	./${DEBUG_EXECUTABLE} < ${i}
 
 release: ${RELEASE_EXECUTABLE}
-	./${RELEASE_EXECUTABLE} < K5.txt
+	./${RELEASE_EXECUTABLE} < ${i}
 
 clean:
 	rm -rf ./${BUILD_DIR}
