@@ -4,8 +4,9 @@
 
 void ConsumirComentarios()
 {
-    char c;
-    while (scanf("c %*[^\n]%1[\n]", &c) == 1)
+    // Hacen falta 2 char-s debido a que scanf() le agrega \0 al final
+    char c[2];
+    while (scanf("c %*[^\n]%1[\n]", c) == 1)
         ;
 }
 
