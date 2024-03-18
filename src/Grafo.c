@@ -9,7 +9,7 @@ void ConsumirComentarios()
         ;
 }
 
-void AgregarVecino(struct VerticeSt* vertice, u32 w)
+void AgregarVecino(VerticeSt* vertice, u32 w)
 {
     vertice->grado += 1;
     if (vertice->grado == 1) {
@@ -22,7 +22,7 @@ void AgregarVecino(struct VerticeSt* vertice, u32 w)
     vertice->vecinos[vertice->grado - 1] = w;
 }
 
-u32 LeerLados(struct VerticeSt* vertices, u32 n, u32 m)
+u32 LeerLados(VerticeSt* vertices, u32 n, u32 m)
 {
     for (u32 i = 0; i < m; ++i) {
         u32 v, w;
@@ -38,11 +38,11 @@ u32 LeerLados(struct VerticeSt* vertices, u32 n, u32 m)
     return m;
 }
 
-u32 CalcularDelta(struct VerticeSt* vertices, u32 n)
+u32 CalcularDelta(VerticeSt* vertices, u32 n)
 {
     u32 delta = 0;
     for (u32 i = 0; i < n; i++) {
-        struct VerticeSt* v = &vertices[i];
+        VerticeSt* v = &vertices[i];
         delta = (v->grado > delta) ? v->grado : delta;
     }
     return delta;
@@ -57,7 +57,7 @@ Grafo ConstruirGrafo()
     }
     assert(n > 1 && m > 0);
 
-    struct VerticeSt* vertices = calloc(n, sizeof(struct VerticeSt));
+    VerticeSt* vertices = calloc(n, sizeof(VerticeSt));
     u32 lados_leidos = LeerLados(vertices, n, m);
 
     if (lados_leidos < m) {
