@@ -17,7 +17,6 @@ typedef GrafoSt* Grafo;
 
 // debe leer desde stdin
 Grafo ConstruirGrafo();
-
 void DestruirGrafo(Grafo G);
 
 
