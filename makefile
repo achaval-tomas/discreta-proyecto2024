@@ -1,8 +1,9 @@
 FILES=main.c Grafo.c
 
 COMMON_ARGS=-Wall -Werror -std=c99
-DEBUG_ARGS=-g -fsanitize=address
+DEBUG_ARGS=-g
 RELEASE_ARGS=-O3
+VALGRIND_OPTIONS=--leak-check=full --show-leak-kinds=all --track-origins=yes --quiet
 
 SOURCES=$(patsubst %, src/%, $(FILES))
 
@@ -29,7 +30,7 @@ build: ${DEBUG_EXECUTABLE}
 i=K5.txt
 
 run: ${DEBUG_EXECUTABLE}
-	./${DEBUG_EXECUTABLE} < ${i}
+	valgrind ${VALGRIND_OPTIONS} ./${DEBUG_EXECUTABLE} < ${i}
 
 release: ${RELEASE_EXECUTABLE}
 	./${RELEASE_EXECUTABLE} < ${i}
