@@ -3,7 +3,7 @@
 
 void ImprimirGrafo(Grafo g)
 {
-    printf("n: %u, m: %u, delta: %u\n", NumeroDeVertices(g), NumeroDeLados(g), Delta(g));
+    printf("\nn: %u, m: %u, delta: %u\n", NumeroDeVertices(g), NumeroDeLados(g), Delta(g));
 
     for (u32 i = 0; i < g->num_vertices; i++) {
         VerticeSt* v = &g->vertices[i];
@@ -18,12 +18,51 @@ void ImprimirGrafo(Grafo g)
     }
 }
 
+// test ImportarColores y AsignarColor
+void ColorearGrafo(Grafo g){
+    printf("\nColoreando...\n");
+    u32 n = NumeroDeVertices(g);
+    color* Color = calloc(n, sizeof(color));
+    for (u32 i = 0; i<n; ++i)
+        Color[i] = n-i;
+    ImportarColores(Color, g);
+    free(Color);
+
+    // no deberia afectar (K5)
+    AsignarColor(99, 10, g);
+}
+
+// test ExtraerColores
+void ImprimirColores(Grafo g){
+
+    int n = NumeroDeVertices(g);
+    color* Colores = calloc(n, sizeof(color));
+    ExtraerColores(g, Colores);
+
+    printf("Colores Utilizados: ");
+    for (u32 i = 0; i<n; ++i){
+        if (i != 0) {
+            printf(", ");
+        }
+        printf("%u", Colores[i]);
+    }
+    printf("\n");
+
+    free(Colores);
+}
+
 int main()
 {
     Grafo grafo = ConstruirGrafo();
 
     ImprimirGrafo(grafo);
 
+    ColorearGrafo(grafo);
+    ImprimirColores(grafo);
+
+    ImprimirGrafo(grafo);
+
+    printf("\n");
     printf("Grado de vértice out of bounds: %u\n", Grado(NumeroDeVertices(grafo), grafo));
     printf("Color de vértice out of bounds: %u\n", Color(NumeroDeVertices(grafo), grafo));
 
