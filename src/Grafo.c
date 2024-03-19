@@ -1,14 +1,6 @@
 #include "APIG24.h"
-#include <stdio.h>
 #include <assert.h>
-
-#define ERROR(...)                    \
-    {                                 \
-        fprintf(stderr, "ERROR: ");   \
-        fprintf(stderr, __VA_ARGS__); \
-        fprintf(stderr, "\n");        \
-        exit(EXIT_FAILURE);           \
-    }
+#include <stdio.h>
 
 void ConsumirComentarios()
 {
@@ -38,8 +30,6 @@ u32 LeerLados(VerticeSt* vertices, u32 n, u32 m)
         if (scanf("e %u %u\n", &v, &w) != 2)
             return i;
 
-        assert(v < n && w < n);
-
         AgregarVecino(&vertices[v], w);
         AgregarVecino(&vertices[w], v);
     }
@@ -62,18 +52,18 @@ Grafo ConstruirGrafo()
     ConsumirComentarios();
     u32 n, m;
     if (scanf("p edge %u %u\n", &n, &m) != 2)
-        ERROR("no se pudo leer el formato 'p edge %%u %%u'");
+        return NULL;
 
     if (n < 2)
-        ERROR("se especificaron %u vertices pero la cantidad minima es 2", n);
+        return NULL;
     if (m < 1)
-        ERROR("se especificaron %u lados pero la cantidad minima es 1", m);
+        return NULL;
 
     VerticeSt* vertices = calloc(n, sizeof(VerticeSt));
 
     u32 lados_leidos = LeerLados(vertices, n, m);
     if (lados_leidos < m)
-        ERROR("se esperaban %u lados pero sólo se leyeron %u.\n", m, lados_leidos);
+        return NULL;
 
     Grafo grafo = malloc(sizeof(GrafoSt));
     grafo->vertices = vertices;

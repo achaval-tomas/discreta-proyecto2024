@@ -11,7 +11,7 @@ void AsignarColor(color x, u32 i, Grafo G)
 void ExtraerColores(Grafo G, color* Color)
 {
     u32 n = NumeroDeVertices(G);
-    for (u32 i = 0; i<n; ++i)
+    for (u32 i = 0; i < n; ++i)
         Color[i] = G->vertices[i].color;
 }
 
@@ -19,6 +19,6 @@ void ExtraerColores(Grafo G, color* Color)
 void ImportarColores(color* Color, Grafo G)
 {
     u32 n = NumeroDeVertices(G);
-    for (u32 i = 0; i<n; ++i)
+    for (u32 i = 0; i < n; ++i)
         G->vertices[i].color = Color[i];
 }

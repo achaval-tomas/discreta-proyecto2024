@@ -1,5 +1,5 @@
-#include <stdio.h>
 #include "APIG24.h"
+#include <stdio.h>
 
 void ImprimirGrafo(Grafo g)
 {
@@ -19,12 +19,13 @@ void ImprimirGrafo(Grafo g)
 }
 
 // test ImportarColores y AsignarColor
-void ColorearGrafo(Grafo g){
+void ColorearGrafo(Grafo g)
+{
     printf("\nColoreando...\n");
     u32 n = NumeroDeVertices(g);
     color* Color = calloc(n, sizeof(color));
-    for (u32 i = 0; i<n; ++i)
-        Color[i] = n-i;
+    for (u32 i = 0; i < n; ++i)
+        Color[i] = n - i;
     ImportarColores(Color, g);
     free(Color);
 
@@ -33,14 +34,15 @@ void ColorearGrafo(Grafo g){
 }
 
 // test ExtraerColores
-void ImprimirColores(Grafo g){
+void ImprimirColores(Grafo g)
+{
 
     u32 n = NumeroDeVertices(g);
     color* Colores = calloc(n, sizeof(color));
     ExtraerColores(g, Colores);
 
     printf("Colores Utilizados: ");
-    for (u32 i = 0; i<n; ++i){
+    for (u32 i = 0; i < n; ++i) {
         if (i != 0) {
             printf(", ");
         }
