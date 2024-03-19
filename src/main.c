@@ -35,7 +35,7 @@ void ColorearGrafo(Grafo g){
 // test ExtraerColores
 void ImprimirColores(Grafo g){
 
-    int n = NumeroDeVertices(g);
+    u32 n = NumeroDeVertices(g);
     color* Colores = calloc(n, sizeof(color));
     ExtraerColores(g, Colores);
 

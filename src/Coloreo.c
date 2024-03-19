@@ -20,5 +20,5 @@ void ImportarColores(color* Color, Grafo G)
 {
     u32 n = NumeroDeVertices(G);
     for (u32 i = 0; i<n; ++i)
-        AsignarColor(Color[i], i, G);
+        G->vertices[i].color = Color[i];
 }
