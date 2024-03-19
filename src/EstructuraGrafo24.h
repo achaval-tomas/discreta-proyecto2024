@@ -10,6 +10,7 @@ typedef u32 color;
 typedef struct {
     u32* vecinos; // es NULL si y sólo si grado == 0
     u32 grado;
+    u32 capacidad;
     color color;
 } VerticeSt;
 

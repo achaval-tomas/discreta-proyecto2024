@@ -12,14 +12,12 @@ void ConsumirComentarios()
 
 void AgregarVecino(VerticeSt* vertice, u32 w)
 {
-    vertice->grado += 1;
-    if (vertice->grado == 1) {
-        vertice->vecinos = malloc(1 * sizeof(u32));
-    } else {
-        // TODO: multiplicar capacidad del arreglo por una constante
-        vertice->vecinos = realloc(vertice->vecinos, vertice->grado * sizeof(u32));
+    if (vertice->capacidad == vertice->grado) {
+        vertice->capacidad = (vertice->capacidad == 0) ? 1 : vertice->capacidad * 2;
+        vertice->vecinos = realloc(vertice->vecinos, vertice->capacidad * sizeof(u32));
     }
 
+    vertice->grado += 1;
     vertice->vecinos[vertice->grado - 1] = w;
 }
 
