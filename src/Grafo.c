@@ -28,6 +28,8 @@ u32 LeerLados(VerticeSt* vertices, u32 n, u32 m)
         if (scanf("e %u %u\n", &v, &w) != 2)
             return i;
 
+        assert(v < n && w < n);
+
         AgregarVecino(&vertices[v], w);
         AgregarVecino(&vertices[w], v);
     }
