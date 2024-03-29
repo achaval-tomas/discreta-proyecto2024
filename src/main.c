@@ -57,6 +57,11 @@ int main()
 {
     Grafo grafo = ConstruirGrafo();
 
+    if (grafo == NULL) {
+        fprintf(stderr, "Error al leer el grafo!\n");
+        return EXIT_FAILURE;
+    }
+
     ImprimirGrafo(grafo);
 
     ColorearGrafo(grafo);

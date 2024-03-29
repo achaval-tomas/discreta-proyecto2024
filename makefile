@@ -1,6 +1,6 @@
 FILES=main.c Grafo.c Vertice.c Coloreo.c
 
-COMMON_ARGS=-Wall -Werror -std=c99
+COMMON_ARGS=-Wall -Wextra -Werror -std=c99
 DEBUG_ARGS=-g
 RELEASE_ARGS=-O3
 VALGRIND_OPTIONS=--leak-check=full --show-leak-kinds=all --track-origins=yes --quiet

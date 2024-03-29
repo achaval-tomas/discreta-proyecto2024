@@ -62,8 +62,10 @@ Grafo ConstruirGrafo()
     VerticeSt* vertices = calloc(n, sizeof(VerticeSt));
 
     u32 lados_leidos = LeerLados(vertices, n, m);
-    if (lados_leidos < m)
+    if (lados_leidos < m) {
+        free(vertices);
         return NULL;
+    }
 
     Grafo grafo = malloc(sizeof(GrafoSt));
     grafo->vertices = vertices;
