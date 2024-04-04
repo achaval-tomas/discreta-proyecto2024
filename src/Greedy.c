@@ -5,22 +5,24 @@
 #define MIN(x, y) (((x) < (y)) ? (x) : (y))
 
 // Chequear que el orden dado es un orden válido.
-char CheckOrder(u32* Orden, u32 length)
+char ChequearOrden(u32* Orden, u32 n)
 {
-    char* flags = calloc(length, sizeof(char));
+    char* found_flags = calloc(n, sizeof(char));
 
-    for (u32 i = 0; i < length; ++i) {
-        if (Orden[i] >= length)
-            return 0;
+    int is_valid = 1;
+    for (u32 i = 0; i < n; ++i) {
+        u32 v = Orden[i];
 
-        if (flags[Orden[i]])
-            return 0;
+        if (v >= n || found_flags[v]) {
+            is_valid = 0;
+            break;
+        }
 
-        flags[Orden[i]] = 1;
+        found_flags[v] = 1;
     }
 
-    free(flags);
-    return 1;
+    free(found_flags);
+    return is_valid;
 }
 
 // Colorear todos los vertices con 0.
@@ -59,7 +61,7 @@ u32 ProximoColor(Grafo G, u32 v, u32 n_colores)
 u32 Greedy(Grafo G, u32* Orden)
 {
     u32 n = NumeroDeVertices(G);
-    if (!CheckOrder(Orden, n))
+    if (!ChequearOrden(Orden, n))
         return -1;
 
     ResetearColores(G);
