@@ -27,26 +27,6 @@ void ResetearColores(Grafo G)
     free(colores);
 }
 
-// se asume que Orden apunta a un sector de memoria con n lugares.
-u32 Greedy(Grafo G, u32* Orden)
-{
-    u32 n = NumeroDeVertices(G);
-    if (!CheckOrder(Orden, n))
-        return -1;
-
-    ResetearColores(G);
-
-    u32 num_colores = 0;
-
-    for (u32 i = 0; i < n; ++i) {
-        u32 lowest_color = ProximoColor(G, i, num_colores);
-        AsignarColor(lowest_color, i, G);
-        num_colores = max(lowest_color, num_colores);
-    }
-
-    return num_colores;
-}
-
 // Asume que el color 0 significa que el vértice no está pintado
 u32 ProximoColor(Grafo G, u32 v, u32 n_colores)
 {
@@ -71,4 +51,24 @@ u32 ProximoColor(Grafo G, u32 v, u32 n_colores)
     free(flags);
 
     return n_colores + 1;
+}
+
+// se asume que Orden apunta a un sector de memoria con n lugares.
+u32 Greedy(Grafo G, u32* Orden)
+{
+    u32 n = NumeroDeVertices(G);
+    if (!CheckOrder(Orden, n))
+        return -1;
+
+    ResetearColores(G);
+
+    u32 num_colores = 0;
+
+    for (u32 i = 0; i < n; ++i) {
+        u32 lowest_color = ProximoColor(G, i, num_colores);
+        AsignarColor(lowest_color, i, G);
+        num_colores = max(lowest_color, num_colores);
+    }
+
+    return num_colores;
 }
