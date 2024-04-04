@@ -5,7 +5,7 @@
 #define MIN(x, y) (((x) < (y)) ? (x) : (y))
 
 // Chequear que el orden dado es un orden válido.
-char ChequearOrden(u32* Orden, u32 n)
+static char ChequearOrden(u32* Orden, u32 n)
 {
     char* found_flags = calloc(n, sizeof(char));
 
@@ -26,7 +26,7 @@ char ChequearOrden(u32* Orden, u32 n)
 }
 
 // Colorear todos los vertices con 0.
-void ResetearColores(Grafo G)
+static void ResetearColores(Grafo G)
 {
     u32* colores = calloc(NumeroDeVertices(G), sizeof(u32));
     ImportarColores(colores, G);
@@ -34,7 +34,7 @@ void ResetearColores(Grafo G)
 }
 
 // Asume que el color 0 significa que el vértice no está pintado.
-u32 ProximoColor(Grafo G, u32 v, u32 n_colores)
+static u32 ProximoColor(Grafo G, u32 v, u32 n_colores)
 {
     char* flags = calloc(n_colores, sizeof(char));
 
