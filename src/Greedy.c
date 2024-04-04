@@ -68,5 +68,7 @@ u32 ProximoColor(Grafo G, u32 v, u32 n_colores)
             return i;
     }
 
+    free(flags);
+
     return n_colores + 1;
 }
