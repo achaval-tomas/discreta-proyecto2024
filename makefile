@@ -1,4 +1,4 @@
-FILES=main.c Grafo.c Vertice.c Coloreo.c
+FILES=main.c Grafo.c Vertice.c Coloreo.c Greedy.c
 
 COMMON_ARGS=-Wall -Wextra -Werror -std=c99
 DEBUG_ARGS=-g

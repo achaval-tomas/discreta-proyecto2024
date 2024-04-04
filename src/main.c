@@ -1,4 +1,5 @@
 #include "APIG24.h"
+#include "API2024Parte2.h"
 #include <stdio.h>
 
 void ImprimirGrafo(Grafo g)
@@ -64,7 +65,12 @@ int main()
 
     ImprimirGrafo(grafo);
 
-    ColorearGrafo(grafo);
+    u32 n = NumeroDeVertices(grafo);
+    u32* orden = calloc(n, sizeof(u32));
+    for (u32 i = 0; i<n; ++i)
+        orden[i] = i;
+    Greedy(grafo, orden);
+    free(orden);
     ImprimirColores(grafo);
 
     ImprimirGrafo(grafo);
