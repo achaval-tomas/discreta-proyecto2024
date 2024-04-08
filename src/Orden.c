@@ -49,7 +49,6 @@ void MergeSortRec(u32* arr, u32 start, u32 end, u32* buf, CmpFn cmp, void* user_
 
 void MergeSort(u32* arr, u32 length, CmpFn cmp, void* user_data) {
     u32* buf = malloc(length * sizeof(u32));
-    memset(buf, ~0, length * sizeof(u32));
     MergeSortRec(arr, 0, length, buf, cmp, user_data);
     free(buf);
 }
