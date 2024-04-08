@@ -5,12 +5,14 @@
 #define MAX(x, y) (((x) > (y)) ? (x) : (y))
 #define MIN(x, y) (((x) < (y)) ? (x) : (y))
 
-void Merge(u32* arr, u32 start, u32 middle, u32 end, u32* buf) {
+typedef int (*CmpFn)(u32 lhs, u32 rhs);
+
+void Merge(u32* arr, u32 start, u32 middle, u32 end, u32* buf, CmpFn cmp) {
     u32 i = start, j = middle;
     for (u32 k = start; k < end; k++) {
         if (i < middle && j < end) {
             assert(i < middle && j < end);
-            if (arr[i] <= arr[j]) {
+            if (cmp(arr[i], arr[j]) <= 0) {
                 buf[k] = arr[i];
                 i++;
             } else {
@@ -31,7 +33,7 @@ void Merge(u32* arr, u32 start, u32 middle, u32 end, u32* buf) {
     memcpy(arr + start, buf + start, (end - start) * sizeof(u32));
 }
 
-void MergeSortRec(u32* arr, u32 start, u32 end, u32* buf) {
+void MergeSortRec(u32* arr, u32 start, u32 end, u32* buf, CmpFn cmp) {
     assert(start <= end);
 
     if ((end - start) <= 1) {
@@ -40,15 +42,15 @@ void MergeSortRec(u32* arr, u32 start, u32 end, u32* buf) {
 
     u32 middle = (start + end) / 2;
 
-    MergeSortRec(arr, start, middle, buf);
-    MergeSortRec(arr, middle, end, buf);
-    Merge(arr, start, middle, end, buf);
+    MergeSortRec(arr, start, middle, buf, cmp);
+    MergeSortRec(arr, middle, end, buf, cmp);
+    Merge(arr, start, middle, end, buf, cmp);
 }
 
-void MergeSort(u32* arr, u32 length) {
+void MergeSort(u32* arr, u32 length, CmpFn cmp) {
     u32* buf = malloc(length * sizeof(u32));
     memset(buf, ~0, length * sizeof(u32));
-    MergeSortRec(arr, 0, length, buf);
+    MergeSortRec(arr, 0, length, buf, cmp);
     free(buf);
 }
 
