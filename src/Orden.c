@@ -1,9 +1,58 @@
 #include "API2024Parte2.h"
+#include <assert.h>
+#include <string.h>
 
 #define MAX(x, y) (((x) > (y)) ? (x) : (y))
 #define MIN(x, y) (((x) < (y)) ? (x) : (y))
 
-// Asume que ambos ordenes tienen r lugares de memoria. 
+void Merge(u32* arr, u32 start, u32 middle, u32 end, u32* buf) {
+    u32 i = start, j = middle;
+    for (u32 k = start; k < end; k++) {
+        if (i < middle && j < end) {
+            assert(i < middle && j < end);
+            if (arr[i] <= arr[j]) {
+                buf[k] = arr[i];
+                i++;
+            } else {
+                buf[k] = arr[j];
+                j++;
+            }
+        } else if (j == end) {
+            assert(i < middle && j == end);
+            buf[k] = arr[i];
+            i++;
+        } else {
+            assert(i == middle && j < end);
+            buf[k] = arr[j];
+            j++;
+        }
+    }
+    assert(i == middle && j == end);
+    memcpy(arr + start, buf + start, (end - start) * sizeof(u32));
+}
+
+void MergeSortRec(u32* arr, u32 start, u32 end, u32* buf) {
+    assert(start <= end);
+
+    if ((end - start) <= 1) {
+        return;
+    }
+
+    u32 middle = (start + end) / 2;
+
+    MergeSortRec(arr, start, middle, buf);
+    MergeSortRec(arr, middle, end, buf);
+    Merge(arr, start, middle, end, buf);
+}
+
+void MergeSort(u32* arr, u32 length) {
+    u32* buf = malloc(length * sizeof(u32));
+    memset(buf, ~0, length * sizeof(u32));
+    MergeSortRec(arr, 0, length, buf);
+    free(buf);
+}
+
+// Asume que ambos ordenes tienen r lugares de memoria.
 // Complejidad O(n)
 void CompletarOrdenes (u32* orden_M, u32* orden_m, u32 r, Grafo G){
     u32 n = NumeroDeVertices(G);
@@ -57,8 +106,8 @@ char GulDukat(Grafo G, u32* Orden){
         orden_colores[idx++] = max;
         orden_M[max-1] = 0;
     }
-    
-    /* Ordenar los colores divisibles por 2 y no por 4 
+
+    /* Ordenar los colores divisibles por 2 y no por 4
      * segun M+m de mayor a menor.
      */
     for (u32 i = 2; i<=r; i+=4){
@@ -91,12 +140,12 @@ char GulDukat(Grafo G, u32* Orden){
 
     if (idx !=  r)
         error = 1;
-    
+
     // orden_colores tiene el orden x1, ..., xr a utilizar.
 
     u32* indexes = calloc(r, sizeof(u32));
     u32* vert_por_color = calloc(r, sizeof(u32));
-    
+
     for (u32 i = 0; i<n; ++i)
         vert_por_color[Color(i, G)-1] += 1;
 
