@@ -3,22 +3,23 @@
 #define MAX(x, y) (((x) > (y)) ? (x) : (y))
 #define MIN(x, y) (((x) < (y)) ? (x) : (y))
 
-#define GRUPO_1 '1'
-#define GRUPO_2 '2'
-#define GRUPO_3 '3'
+#define GRUPO_1 '1' // Múltiplos de 4
+#define GRUPO_2 '2' // Pares no divisibles por 4
+#define GRUPO_3 '3' // Impares
 
+// Orden de los colores de acuerdo a la consigna
 char VaAntes(color a, color b, u32* m, u32* M, char tipo)
 {
     u32 ret = 0;
     switch (tipo) {
-    case '1':
+    case GRUPO_1:
         ret = M[a - 1] >= M[b - 1];
         break;
-    case '2':
+    case GRUPO_2:
         ret = (m[a - 1] + M[a - 1])
             >= (m[b - 1] + M[b - 1]);
         break;
-    case '3':
+    case GRUPO_3:
         ret = m[a - 1] >= m[b - 1];
         break;
     }
@@ -49,6 +50,10 @@ u32 Partition(color* a, u32 lft, u32 rgt, u32* m, u32* M, char tipo)
     return piv;
 }
 
+/* Quick Sort ordenará el arreglo arr en el orden establecido por
+ * la función goes_before utilizando los m y M correspondientes
+ * para el tipo seleccionado.
+ */
 void QuickSort(u32* arr, u32 izq, u32 der, u32* m, u32* M, char tipo)
 {
     if (izq < der) {
@@ -78,8 +83,10 @@ void CompletarOrdenes(u32* orden_M, u32* orden_m, u32 r, Grafo G)
     }
 }
 
-// Se asume que Orden apunta a una region de memoria con n lugares y
-// que G tiene un coloreo propio con colores {1, 2, .., r} para algún r.
+/* Se asume que Orden apunta a una region de memoria con n lugares y
+ * que G tiene un coloreo propio con colores {1, 2, .., r} para algún r.
+ * Complejidad O(n + r*log(r) + n) ~ O(n)
+ */
 char GulDukat(Grafo G, u32* Orden)
 {
     u32 n = NumeroDeVertices(G);
