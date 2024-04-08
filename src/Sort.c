@@ -6,7 +6,15 @@ static void Merge(u32* arr, u32* buf, u32 middle, u32 length, CmpFn cmp, void* u
 {
     u32 i = 0, j = middle;
     for (u32 k = 0; k < length; k++) {
-        if (i < middle && j < length) {
+        if (j == length) {
+            assert(i < middle);
+            buf[k] = arr[i];
+            i++;
+        } else if (i == middle) {
+            assert(j < length);
+            buf[k] = arr[j];
+            j++;
+        } else {
             assert(i < middle && j < length);
             if (cmp(arr[i], arr[j], user_data) <= 0) {
                 buf[k] = arr[i];
@@ -15,14 +23,6 @@ static void Merge(u32* arr, u32* buf, u32 middle, u32 length, CmpFn cmp, void* u
                 buf[k] = arr[j];
                 j++;
             }
-        } else if (j == length) {
-            assert(i < middle && j == length);
-            buf[k] = arr[i];
-            i++;
-        } else {
-            assert(i == middle && j < length);
-            buf[k] = arr[j];
-            j++;
         }
     }
     assert(i == middle && j == length);
