@@ -65,10 +65,10 @@ char GulDukat(Grafo G, u32* Orden){
         color max = 2;
         u32 maxPrio = 0;
         for (u32 j = 2; j<=r; j+=4){
-            u32 prioNew = orden_M[j-1] + orden_m[j-1];
-            if (prioNew > maxPrio){
+            u32 j_prio = orden_M[j-1] + orden_m[j-1];
+            if (j_prio > maxPrio){
                 max = j;
-                maxPrio = orden_M[max-1] + orden_m[max-1];
+                maxPrio = j_prio;
             }
         }
         orden_colores[idx++] = max;
@@ -89,10 +89,10 @@ char GulDukat(Grafo G, u32* Orden){
 
     free(orden_M); free(orden_m);
 
-    // orden_colores tiene el orden x1, ..., xr a utilizar.
-    if (idx < r)
+    if (idx !=  r)
         error = 1;
-
+    
+    // orden_colores tiene el orden x1, ..., xr a utilizar.
     u32 index = 0;
     for (u32 i = 0; i<r; ++i){
         for (u32 x = 0; x<n; ++x){
@@ -100,6 +100,9 @@ char GulDukat(Grafo G, u32* Orden){
                 Orden[index++] = x;
         } 
     }
+
+    if (index != n)
+        error = 1;
 
     free(orden_colores);
     return error;
