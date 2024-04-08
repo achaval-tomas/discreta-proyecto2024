@@ -31,8 +31,8 @@ char GulDukat(Grafo G, u32* Orden){
     for (u32 i = 0; i<n; ++i)
         r = MAX(Color(i, G), r);
 
-    color* orden_M = calloc(r, sizeof(color));
-    color* orden_m = calloc(r, sizeof(color));
+    u32* orden_M = calloc(r, sizeof(color));
+    u32* orden_m = calloc(r, sizeof(color));
 
     CompletarOrdenes(orden_M, orden_m, r, G);
     /* orden_M contiene el máximo grado de vertice por color.
@@ -93,18 +93,26 @@ char GulDukat(Grafo G, u32* Orden){
         error = 1;
     
     // orden_colores tiene el orden x1, ..., xr a utilizar.
-    u32 index = 0;
-    for (u32 i = 0; i<r; ++i){
-        for (u32 x = 0; x<n; ++x){
-            if (Color(x, G) == orden_colores[i])
-                Orden[index++] = x;
-        } 
+
+    u32* indexes = calloc(r, sizeof(u32));
+    u32* vert_por_color = calloc(r, sizeof(u32));
+    
+    for (u32 i = 0; i<n; ++i)
+        vert_por_color[Color(i, G)-1] += 1;
+
+    u32 acc = 0;
+    for (u32 i = 0; i<r; ++i) {
+        color c = orden_colores[i];
+        indexes[c-1] = acc;
+        acc += vert_por_color[c-1];
     }
 
-    if (index != n)
-        error = 1;
+    for (u32 i = 0; i<n; ++i){
+        u32 index = indexes[Color(i, G)-1]++;
+        Orden[index] = i;
+    }
 
-    free(orden_colores);
+    free(orden_colores); free(indexes); free(vert_por_color);
     return error;
 }
 
