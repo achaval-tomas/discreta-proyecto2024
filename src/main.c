@@ -63,22 +63,25 @@ int main()
         return EXIT_FAILURE;
     }
 
-    ImprimirGrafo(grafo);
+    //ImprimirGrafo(grafo);
 
     u32 n = NumeroDeVertices(grafo);
     u32* orden = calloc(n, sizeof(u32));
     for (u32 i = 0; i<n; ++i)
         orden[i] = i;
-    Greedy(grafo, orden);
+    
+    u32 cols = Greedy(grafo, orden);
+    printf("\nColores Utilizados: %u\n", cols);
+    
+    for (u32 i = 0; i++<5;){
+        if (GulDukat(grafo, orden))
+            printf("Algo salió mal.");
+
+        cols = Greedy(grafo, orden);
+        printf("\nColores Utilizados: %u\n", cols);
+    }
+
     free(orden);
-    ImprimirColores(grafo);
-
-    ImprimirGrafo(grafo);
-
-    printf("\n");
-    printf("Grado de vértice out of bounds: %u\n", Grado(NumeroDeVertices(grafo), grafo));
-    printf("Color de vértice out of bounds: %u\n", Color(NumeroDeVertices(grafo), grafo));
-
     DestruirGrafo(grafo);
 
     return 0;
