@@ -5,14 +5,14 @@
 #define MAX(x, y) (((x) > (y)) ? (x) : (y))
 #define MIN(x, y) (((x) < (y)) ? (x) : (y))
 
-typedef int (*CmpFn)(u32 lhs, u32 rhs);
+typedef int (*CmpFn)(u32 lhs, u32 rhs, void* user_data);
 
-void Merge(u32* arr, u32 start, u32 middle, u32 end, u32* buf, CmpFn cmp) {
+void Merge(u32* arr, u32 start, u32 middle, u32 end, u32* buf, CmpFn cmp, void* user_data) {
     u32 i = start, j = middle;
     for (u32 k = start; k < end; k++) {
         if (i < middle && j < end) {
             assert(i < middle && j < end);
-            if (cmp(arr[i], arr[j]) <= 0) {
+            if (cmp(arr[i], arr[j], user_data) <= 0) {
                 buf[k] = arr[i];
                 i++;
             } else {
@@ -33,7 +33,7 @@ void Merge(u32* arr, u32 start, u32 middle, u32 end, u32* buf, CmpFn cmp) {
     memcpy(arr + start, buf + start, (end - start) * sizeof(u32));
 }
 
-void MergeSortRec(u32* arr, u32 start, u32 end, u32* buf, CmpFn cmp) {
+void MergeSortRec(u32* arr, u32 start, u32 end, u32* buf, CmpFn cmp, void* user_data) {
     assert(start <= end);
 
     if ((end - start) <= 1) {
@@ -42,16 +42,28 @@ void MergeSortRec(u32* arr, u32 start, u32 end, u32* buf, CmpFn cmp) {
 
     u32 middle = (start + end) / 2;
 
-    MergeSortRec(arr, start, middle, buf, cmp);
-    MergeSortRec(arr, middle, end, buf, cmp);
-    Merge(arr, start, middle, end, buf, cmp);
+    MergeSortRec(arr, start, middle, buf, cmp, user_data);
+    MergeSortRec(arr, middle, end, buf, cmp, user_data);
+    Merge(arr, start, middle, end, buf, cmp, user_data);
 }
 
-void MergeSort(u32* arr, u32 length, CmpFn cmp) {
+void MergeSort(u32* arr, u32 length, CmpFn cmp, void* user_data) {
     u32* buf = malloc(length * sizeof(u32));
     memset(buf, ~0, length * sizeof(u32));
-    MergeSortRec(arr, 0, length, buf, cmp);
+    MergeSortRec(arr, 0, length, buf, cmp, user_data);
     free(buf);
+}
+
+struct CmpData {
+    u32* orden_m;
+    u32* orden_M;
+};
+
+int cmp_mod_4_eq_0(u32 lhs, u32 rhs, void* user_data)
+{
+    struct CmpData* cmp_data = (struct CmpData*)(user_data);
+
+    return cmp_data->orden_M[rhs - 1] - cmp_data->orden_M[lhs - 1];
 }
 
 // Asume que ambos ordenes tienen r lugares de memoria.
