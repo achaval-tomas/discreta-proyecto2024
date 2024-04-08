@@ -79,6 +79,10 @@ int main()
     TEST_SORT(1, 0);
     TEST_SORT(0, 1, 2);
     TEST_SORT(2, 1, 0);
+    TEST_SORT(0, 1, 2, 3);
+    TEST_SORT(3, 2, 1, 0);
+    TEST_SORT(0, 1, 2, 3, 4);
+    TEST_SORT(4, 3, 2, 1, 0);
     TEST_SORT(3, 2, 5, 2, 1, 5);
     TEST_SORT(4, 4, 4, 4, 4);
 

@@ -2,12 +2,12 @@
 #include <assert.h>
 #include <string.h>
 
-static void Merge(u32* arr, u32 start, u32 middle, u32 end, u32* buf, CmpFn cmp, void* user_data)
+static void Merge(u32* arr, u32* buf, u32 middle, u32 length, CmpFn cmp, void* user_data)
 {
-    u32 i = start, j = middle;
-    for (u32 k = start; k < end; k++) {
-        if (i < middle && j < end) {
-            assert(i < middle && j < end);
+    u32 i = 0, j = middle;
+    for (u32 k = 0; k < length; k++) {
+        if (i < middle && j < length) {
+            assert(i < middle && j < length);
             if (cmp(arr[i], arr[j], user_data) <= 0) {
                 buf[k] = arr[i];
                 i++;
@@ -15,38 +15,36 @@ static void Merge(u32* arr, u32 start, u32 middle, u32 end, u32* buf, CmpFn cmp,
                 buf[k] = arr[j];
                 j++;
             }
-        } else if (j == end) {
-            assert(i < middle && j == end);
+        } else if (j == length) {
+            assert(i < middle && j == length);
             buf[k] = arr[i];
             i++;
         } else {
-            assert(i == middle && j < end);
+            assert(i == middle && j < length);
             buf[k] = arr[j];
             j++;
         }
     }
-    assert(i == middle && j == end);
-    memcpy(arr + start, buf + start, (end - start) * sizeof(u32));
+    assert(i == middle && j == length);
+    memcpy(arr, buf, length * sizeof(u32));
 }
 
-static void MergeSortRec(u32* arr, u32 start, u32 end, u32* buf, CmpFn cmp, void* user_data)
+static void MergeSortRec(u32* arr, u32* buf, u32 length, CmpFn cmp, void* user_data)
 {
-    assert(start <= end);
-
-    if ((end - start) <= 1) {
+    if (length <= 1) {
         return;
     }
 
-    u32 middle = (start + end) / 2;
+    u32 middle = length / 2; // Always > 0
 
-    MergeSortRec(arr, start, middle, buf, cmp, user_data);
-    MergeSortRec(arr, middle, end, buf, cmp, user_data);
-    Merge(arr, start, middle, end, buf, cmp, user_data);
+    MergeSortRec(arr, buf, middle, cmp, user_data);
+    MergeSortRec(arr + middle, buf + middle, length - middle, cmp, user_data);
+    Merge(arr, buf, middle, length, cmp, user_data);
 }
 
 void MergeSort(u32* arr, u32 length, CmpFn cmp, void* user_data)
 {
     u32* buf = malloc(length * sizeof(u32));
-    MergeSortRec(arr, 0, length, buf, cmp, user_data);
+    MergeSortRec(arr, buf, length, cmp, user_data);
     free(buf);
 }
