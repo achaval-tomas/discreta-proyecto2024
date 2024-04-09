@@ -1,4 +1,3 @@
-#include "APIG24.h"
 #include "API2024Parte2.h"
 #include <stdio.h>
 

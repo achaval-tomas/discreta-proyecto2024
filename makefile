@@ -7,8 +7,8 @@ SANITIZE_ARGS=-fsanitize=address,undefined
 RELEASE_ARGS=-O3
 VALGRIND_OPTIONS=--leak-check=full --show-leak-kinds=all --track-origins=yes --quiet
 
-LIB_SOURCES=$(patsubst %,src/%, $(LIB_FILES))
-MAIN_SOURCES=$(patsubst %,src/%, $(MAIN_FILES))
+LIB_SOURCES=$(patsubst %,src/api/%, $(LIB_FILES))
+MAIN_SOURCES=$(patsubst %,src/testing/%, $(MAIN_FILES))
 
 MAIN_NAMES=$(basename $(MAIN_FILES))
 
@@ -28,17 +28,17 @@ all: ${DEBUG_EXECUTABLES}
 clean:
 	rm -rf ./${BUILD_DIR}
 
-${DEBUG_EXECUTABLES}: $(DEBUG_DIR)/%: src/%.c ${LIB_SOURCES}
+${DEBUG_EXECUTABLES}: $(DEBUG_DIR)/%: src/testing/%.c ${LIB_SOURCES}
 	@mkdir -p $(@D)
-	gcc ${COMMON_ARGS} ${DEBUG_ARGS} -o $@ $< ${LIB_SOURCES}
+	gcc ${COMMON_ARGS} ${DEBUG_ARGS} -o $@ $< ${LIB_SOURCES} -I src/api
 
-${SANITIZE_EXECUTABLES}: $(SANITIZE_DIR)/%: src/%.c ${LIB_SOURCES}
+${SANITIZE_EXECUTABLES}: $(SANITIZE_DIR)/%: src/testing/%.c ${LIB_SOURCES}
 	@mkdir -p $(@D)
-	gcc ${COMMON_ARGS} ${SANITIZE_ARGS} -o $@ $< ${LIB_SOURCES}
+	gcc ${COMMON_ARGS} ${SANITIZE_ARGS} -o $@ $< ${LIB_SOURCES} -I src/api
 
-${RELEASE_EXECUTABLES}: $(RELEASE_DIR)/%: src/%.c ${LIB_SOURCES}
+${RELEASE_EXECUTABLES}: $(RELEASE_DIR)/%: src/testing/%.c ${LIB_SOURCES}
 	@mkdir -p $(@D)
-	gcc ${COMMON_ARGS} ${RELEASE_ARGS} -o $@ $< ${LIB_SOURCES}
+	gcc ${COMMON_ARGS} ${RELEASE_ARGS} -o $@ $< ${LIB_SOURCES} -I src/api
 
 DEF_DEBUG_EXECUTABLE=$(word 1,$(DEBUG_EXECUTABLES))
 DEF_SANITIZE_EXECUTABLE=$(word 1,$(SANITIZE_EXECUTABLES))
