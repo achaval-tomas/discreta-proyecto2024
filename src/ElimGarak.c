@@ -1,21 +1,9 @@
 #include "API2024Parte2.h"
 #include "Math.h"
 #include "Sort.h"
+#include "Util.h"
 #include <assert.h>
 
-/*
-G debe ser un grafo previamente coloreado por Greedy.
-Complejidad: O(n)
-*/
-u32 CalcularMaxColor(Grafo G)
-{
-    u32 max_color = 0;
-    for (u32 v = 0; v < NumeroDeVertices(G); v++) {
-        assert(Color(v, G) > 0); // TODO
-        max_color = MAX(max_color, Color(v, G));
-    }
-    return max_color;
-}
 
 /*
 Dado un grafo G con r colores { 1, ..., r }, devuelve un arreglo

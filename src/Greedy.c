@@ -1,29 +1,7 @@
 #include "API2024Parte2.h"
+#include "Math.h"
+#include "Util.h"
 #include <stdlib.h>
-
-#define MAX(x, y) (((x) > (y)) ? (x) : (y))
-#define MIN(x, y) (((x) < (y)) ? (x) : (y))
-
-// Chequear que el orden dado es un orden válido.
-static char ChequearOrden(u32* Orden, u32 n)
-{
-    char* found_flags = calloc(n, sizeof(char));
-
-    int is_valid = 1;
-    for (u32 i = 0; i < n; ++i) {
-        u32 v = Orden[i];
-
-        if (v >= n || found_flags[v]) {
-            is_valid = 0;
-            break;
-        }
-
-        found_flags[v] = 1;
-    }
-
-    free(found_flags);
-    return is_valid;
-}
 
 // Colorear todos los vertices con 0.
 static void ResetearColores(Grafo G)
