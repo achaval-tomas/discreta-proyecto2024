@@ -1,4 +1,6 @@
 #include "API2024Parte2.h"
+#include <assert.h>
+#include <stdio.h>
 
 #define MAX(x, y) (((x) > (y)) ? (x) : (y))
 #define MIN(x, y) (((x) < (y)) ? (x) : (y))
@@ -6,6 +8,37 @@
 #define GRUPO_1 '1' // Múltiplos de 4
 #define GRUPO_2 '2' // Pares no divisibles por 4
 #define GRUPO_3 '3' // Impares
+
+void RevisarResultado(color* orden, u32 r, u32* m, u32* M) {
+    char mul4 = 1;
+    char even = 0;
+    char odd = 0;
+
+    u32 i = 0;
+
+    while (i < r-1) {
+        color c0 = orden[i];
+        color c1 = orden[i+1];
+
+        if (mul4 && (c1 % 4 == 0)) {
+            assert(M[c0-1] >= M[c1-1]);
+        } else if (mul4 && (c1 % 4 != 0) && (c1 % 2 == 0)) {
+            mul4 = 0;
+            even = 1;
+        } else if (even && (c1 % 2 == 0)) {
+            assert(M[c0-1] + m[c0-1] >= M[c1-1] + m[c1-1]);
+        } else if (even && (c1 % 2 != 0)) {
+            even = 0;
+            odd = 1;
+        } else if (odd && (c1 % 2 == 1)) {
+            assert(m[c0-1] >= m[c1-1]);
+        } else {
+            assert(0);
+        }
+
+        ++i;
+    }
+}
 
 // Orden de los colores de acuerdo a la consigna
 char VaAntes(color a, color b, u32* m, u32* M, char tipo)
@@ -173,6 +206,8 @@ char GulDukat(Grafo G, u32* Orden)
     }
 
     printf("\n");
+    printf("Revisando resultado...\n");
+    RevisarResultado(orden_colores, r, orden_m2, orden_M2);
 
     free(orden_colores);
     free(indices);
