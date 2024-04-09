@@ -73,7 +73,7 @@ int main()
     u32 cols = Greedy(grafo, orden);
     printf("\nColores Utilizados: %u\n", cols);
     
-    for (u32 i = 0; i++<5;){
+    for (u32 i = 0; i++<3;){
         if (GulDukat(grafo, orden))
             printf("Algo salió mal.");
 
