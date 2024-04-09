@@ -1,5 +1,5 @@
-FILES=main.c Grafo.c Vertice.c Coloreo.c Greedy.c Orden.c Sort.c Sort.h ElimGarak.c
-TEST_SORT_FILES=test_sort.c Sort.c Sort.h
+LIB_FILES=Grafo.c Vertice.c Coloreo.c Greedy.c Orden.c Sort.c Sort.h ElimGarak.c Util.h Util.c
+MAIN_FILES=main.c test_sort.c
 
 COMMON_ARGS=-Wall -Wextra -Werror -std=c99
 DEBUG_ARGS=-g
@@ -7,55 +7,53 @@ SANITIZE_ARGS=-fsanitize=address,undefined
 RELEASE_ARGS=-O3
 VALGRIND_OPTIONS=--leak-check=full --show-leak-kinds=all --track-origins=yes --quiet
 
-SOURCES=$(patsubst %, src/%, $(FILES))
-TEST_SORT_SOURCES=$(patsubst %, src/%, $(TEST_SORT_FILES))
+LIB_SOURCES=$(patsubst %,src/%, $(LIB_FILES))
+MAIN_SOURCES=$(patsubst %,src/%, $(MAIN_FILES))
 
-EXECUTABLE_NAME=main
-TEST_SORT_EXECUTABLE_NAME=test_sort
+MAIN_NAMES=$(basename $(MAIN_FILES))
+
 BUILD_DIR=build
-
 DEBUG_DIR=${BUILD_DIR}/debug
 SANITIZE_DIR=${BUILD_DIR}/sanitize
 RELEASE_DIR=${BUILD_DIR}/release
 
-DEBUG_EXECUTABLE=${DEBUG_DIR}/${EXECUTABLE_NAME}
-SANITIZE_EXECUTABLE=${SANITIZE_DIR}/${EXECUTABLE_NAME}
-RELEASE_EXECUTABLE=${RELEASE_DIR}/${EXECUTABLE_NAME}
+DEBUG_EXECUTABLES=$(addprefix $(DEBUG_DIR)/, $(MAIN_NAMES))
+SANITIZE_EXECUTABLES=$(addprefix $(SANITIZE_DIR)/, $(MAIN_NAMES))
+RELEASE_EXECUTABLES=$(addprefix $(RELEASE_DIR)/, $(MAIN_NAMES))
 
 TEST_SORT_EXECUTABLE=${DEBUG_DIR}/${TEST_SORT_EXECUTABLE_NAME}
 
-${DEBUG_EXECUTABLE}: ${SOURCES}
-	@mkdir -p $(@D)
-	gcc ${COMMON_ARGS} ${DEBUG_ARGS} -o ${DEBUG_EXECUTABLE} ${SOURCES}
+all: ${DEBUG_EXECUTABLES}
 
-${SANITIZE_EXECUTABLE}: ${SOURCES}
+${DEBUG_EXECUTABLES}: $(DEBUG_DIR)/%: src/%.c ${LIB_SOURCES}
 	@mkdir -p $(@D)
-	gcc ${COMMON_ARGS} ${DEBUG_ARGS} ${SANITIZE_ARGS} -o ${SANITIZE_EXECUTABLE} ${SOURCES}
+	gcc ${COMMON_ARGS} ${DEBUG_ARGS} -o $@ $< ${LIB_SOURCES}
 
-${RELEASE_EXECUTABLE}: ${SOURCES}
+${SANITIZE_EXECUTABLES}: $(SANITIZE_DIR)/%: src/%.c ${LIB_SOURCES}
 	@mkdir -p $(@D)
-	gcc ${COMMON_ARGS} ${RELEASE_ARGS} -o ${RELEASE_EXECUTABLE} ${SOURCES}
+	gcc ${COMMON_ARGS} ${SANITIZE_ARGS} -o $@ $< ${LIB_SOURCES}
 
-${TEST_SORT_EXECUTABLE}: ${TEST_SORT_SOURCES}
+${RELEASE_EXECUTABLES}: $(RELEASE_DIR)/%: src/%.c ${LIB_SOURCES}
 	@mkdir -p $(@D)
-	gcc ${COMMON_ARGS} ${DEBUG_ARGS} -o ${TEST_SORT_EXECUTABLE} ${TEST_SORT_SOURCES}
+	gcc ${COMMON_ARGS} ${RELEASE_ARGS} -o $@ $< ${LIB_SOURCES}
+
+DEF_DEBUG_EXECUTABLE=$(word 1,$(DEBUG_EXECUTABLES))
+DEF_SANITIZE_EXECUTABLE=$(word 1,$(SANITIZE_EXECUTABLES))
+DEF_RELEASE_EXECUTABLE=$(word 1,$(RELEASE_EXECUTABLES))
 
 build: ${DEBUG_EXECUTABLE}
 
 # Se puede cambiar el archivo usando 'make run i=grafo.txt'
 i=K5.txt
 
-run: ${DEBUG_EXECUTABLE}
-	valgrind ${VALGRIND_OPTIONS} ./${DEBUG_EXECUTABLE} < ${i}
+run: $(DEF_DEBUG_EXECUTABLE)
+	valgrind ${VALGRIND_OPTIONS} ./$(DEF_DEBUG_EXECUTABLE) < ${i}
 
-sanitize: ${SANITIZE_EXECUTABLE}
-	./${SANITIZE_EXECUTABLE} < ${i}
+sanitize: ${DEF_SANITIZE_EXECUTABLE}
+	./${DEF_SANITIZE_EXECUTABLE} < ${i}
 
-release: ${RELEASE_EXECUTABLE}
-	./${RELEASE_EXECUTABLE} < ${i}
+release: ${DEF_RELEASE_EXECUTABLE}
+	./${DEF_RELEASE_EXECUTABLE} < ${i}
 
 clean:
 	rm -rf ./${BUILD_DIR}
-
-test_sort: ${TEST_SORT_EXECUTABLE}
-	valgrind ${VALGRIND_OPTIONS} ./${TEST_SORT_EXECUTABLE} < ${i}
