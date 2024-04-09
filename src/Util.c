@@ -53,7 +53,7 @@ static int ChequearOrdenPorBloques(Grafo G, u32* Orden)
         // Avanzar i hasta encontrar un vértice con otro color, o hasta llegar al último vértice.
         do {
             i += 1;
-        } while (v < NumeroDeVertices(G) && Color(Orden[i], G) == c);
+        } while (i < NumeroDeVertices(G) && Color(Orden[i], G) == c);
     }
 
     free(flags_bloques);
