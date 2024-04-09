@@ -216,12 +216,3 @@ char GulDukat(Grafo G, u32* Orden)
     free(orden_m2);
     return error;
 }
-
-char ElimGarak(Grafo G, u32* Orden)
-{
-    // para evitar warnings
-    Orden[0] = 0;
-    if (Orden[0] < Color(0, G))
-        return 1;
-    return 0;
-};

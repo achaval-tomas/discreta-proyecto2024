@@ -1,4 +1,4 @@
-FILES=main.c Grafo.c Vertice.c Coloreo.c Greedy.c Orden.c Sort.c Sort.h
+FILES=main.c Grafo.c Vertice.c Coloreo.c Greedy.c Orden.c Sort.c Sort.h ElimGarak.c
 TEST_SORT_FILES=test_sort.c Sort.c Sort.h
 
 COMMON_ARGS=-Wall -Wextra -Werror -std=c99
