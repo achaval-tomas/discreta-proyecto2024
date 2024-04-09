@@ -1,4 +1,5 @@
 #include "Util.h"
+#include "APIG24.h"
 #include "Math.h"
 #include <assert.h>
 
@@ -95,4 +96,72 @@ char ChequearReordenamientoVIT(Grafo G, u32* Orden)
     }
 
     return 1;
+}
+
+char ChequearGulDukat(Grafo G, u32* Orden)
+{
+    char rc = 1;
+    u32 n = NumeroDeVertices(G);
+    
+    u32 r = 0;
+    for (u32 i = 0; i < n; ++i)
+        r = MAX(Color(i, G), r);
+
+    u32* M = calloc(r, sizeof(color));
+    u32* m = calloc(r, sizeof(color));
+
+    for (u32 i = 0; i < r; ++i) {
+        m[i] = n;
+    }
+
+    for (u32 i = 0; i < n; ++i) {
+        u32 idx = Color(i, G) - 1;
+        u32 grado = Grado(i, G);
+        M[idx] = MAX(M[idx], grado);
+        m[idx] = MIN(m[idx], grado);
+    }
+
+    char mul4 = 1;
+    char even = 0;
+    char odd = 0;
+
+
+    for (u32 i = 0; i < n-1; ++i) {
+        u32 v0 = Orden[i];
+        u32 v1 = Orden[i+1];
+        color c0 = Color(v0, G);
+        color c1 = Color(v1, G);
+
+        if (c0 == c1)
+            continue;
+
+        if (mul4 && (c1 % 4 == 0)) {
+            if (!(M[c0-1] >= M[c1-1])) {
+                rc = 0; 
+                break;
+            }
+        } else if (mul4 && (c1 % 4 != 0) && (c1 % 2 == 0)) {
+            mul4 = 0;
+            even = 1;
+        } else if (even && (c1 % 2 == 0)) {
+            if (!(M[c0-1] + m[c0-1] >= M[c1-1] + m[c1-1])) {
+                rc = 0; 
+                break;
+            }
+        } else if (even && (c1 % 2 != 0)) {
+            even = 0;
+            odd = 1;
+        } else if (odd && (c1 % 2 == 1)) {
+            if(!(m[c0-1] >= m[c1-1])) {
+                rc = 0;
+                break;
+            }
+        } else {
+            rc = 0;
+            break;
+        }
+    }
+
+    free(m); free(M);
+    return rc;
 }

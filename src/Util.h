@@ -19,4 +19,6 @@ u32 CalcularMaxColor(Grafo G);
 char ChequearOrden(u32* Orden, u32 n);
 char ChequearReordenamientoVIT(Grafo G, u32* Orden);
 
+char ChequearGulDukat(Grafo G, u32* Orden);
+
 #endif
