@@ -25,6 +25,9 @@ TEST_SORT_EXECUTABLE=${DEBUG_DIR}/${TEST_SORT_EXECUTABLE_NAME}
 
 all: ${DEBUG_EXECUTABLES}
 
+clean:
+	rm -rf ./${BUILD_DIR}
+
 ${DEBUG_EXECUTABLES}: $(DEBUG_DIR)/%: src/%.c ${LIB_SOURCES}
 	@mkdir -p $(@D)
 	gcc ${COMMON_ARGS} ${DEBUG_ARGS} -o $@ $< ${LIB_SOURCES}
@@ -55,5 +58,15 @@ sanitize: ${DEF_SANITIZE_EXECUTABLE}
 release: ${DEF_RELEASE_EXECUTABLE}
 	./${DEF_RELEASE_EXECUTABLE} < ${i}
 
-clean:
-	rm -rf ./${BUILD_DIR}
+RUN_TARGETS=$(addprefix run_,$(MAIN_NAMES))
+SANITIZE_TARGETS=$(addprefix sanitize_,$(MAIN_NAMES))
+RELEASE_TARGETS=$(addprefix release_,$(MAIN_NAMES))
+
+${RUN_TARGETS}: run_%: $(DEBUG_DIR)/%
+	valgrind ${VALGRIND_OPTIONS} ./$< < ${i}
+
+${SANITIZE_TARGETS}: sanitize_%: $(SANITIZE_DIR)/%
+	./$< < ${i}
+
+${RELEASE_TARGETS}: release_%: $(RELEASE_DIR)/%
+	./$< < ${i}
