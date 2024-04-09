@@ -41,10 +41,10 @@ DEF_DEBUG_EXECUTABLE=$(word 1,$(DEBUG_EXECUTABLES))
 DEF_SANITIZE_EXECUTABLE=$(word 1,$(SANITIZE_EXECUTABLES))
 DEF_RELEASE_EXECUTABLE=$(word 1,$(RELEASE_EXECUTABLES))
 
-build: ${DEBUG_EXECUTABLE}
-
 # Se puede cambiar el archivo usando 'make run i=grafo.txt'
 i=K5.txt
+
+build: ${DEF_DEBUG_EXECUTABLE}
 
 run: $(DEF_DEBUG_EXECUTABLE)
 	valgrind ${VALGRIND_OPTIONS} ./$(DEF_DEBUG_EXECUTABLE) < ${i}
