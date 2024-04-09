@@ -107,68 +107,11 @@ char ElimGarak(Grafo G, u32* Orden)
     // orden_colores: { 1, ..., r } -> { x1, ..., xr }
     // orden_colores tiene x1, ..., xr
 
-    // orden_colores: { 1, ..., r } -> { x1, ..., xr }
-    // orden_colores_inv: { x1, ..., xr } -> { 1, ..., r }
-
-
-    u32* tabla_posiciones = calloc(r, sizeof(u32));
-    for (u32 i = 1; i < r; i++) {
-        color c = orden_colores[i];
-        color c_prev = orden_colores[i - 1];
-        tabla_posiciones[c - 1] = tabla_posiciones[c_prev - 1]
-            + tabla_cardinalidades[c_prev - 1];
-    }
-    // tabla_posiciones: { 1, ..., r } -> Z
-
-    
- 
-    //}
-    // tabla_posiciones: { x1, ..., xr } -> Z
-    // 
-
-    // tabla_posiciones[x0] = 0
-    // tabla_posiciones[1] = tabla_posiciones[x0] + cardinalidad[x0]
-    // tabla_posiciones[x2] = 0
-    // tabla_posiciones[x3] = 0
-    // tabla_posiciones[x4] = 0
-    //  tabla_posiciones[i] = 
-    //
-    // tabla_posiciones[1] = cardinalidad[x1]
-    // tabla_posiciones[0] nos dice donde va el siguiente
-    // vértice de color x1
-
-    // u32* indices = calloc(r, sizeof(u32));
-
-    // u32 acum = 0;
-    // for (u32 i = 0; i < r; ++i) {
-    //     color c = orden_colores[i];
-    //     indices[c - 1] = acum;
-    //     acum += tabla_cardinalidades[c - 1];
-    // }
-    // indices[i] tiene el indice del primer vertice
-    // a ordenar del color x_i
-    // indices: { 1, ..., r } -> Z
-
-    for (u32 i = 0; i < n; ++i) {
-        u32 ind = tabla_posiciones[Color(i, G) - 1];
-        tabla_posiciones[Color(i, G) - 1]++;
-        Orden[ind] = i;
-    }
-    // free(indices);
-
-    /*
-    for (u32 v = 0; v < n; v++) {
-        u32 c = Color(v, G);
-        u32 i = orden_colores[c - 1] - 1;
-        u32 pos = tabla_posiciones[i];
-        tabla_posiciones[i] += 1;
-        Orden[pos] = v;
-    } */
+    OrdenarVerticesEnBloques(Orden, orden_colores, r, G);
 
     free(tabla_cardinalidades);
     free(tabla_cantidades_colores);
     free(tabla_posiciones_colores);
     free(orden_colores);
-    free(tabla_posiciones);
     return 0;
 }

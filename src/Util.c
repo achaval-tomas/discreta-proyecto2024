@@ -2,6 +2,30 @@
 #include "Math.h"
 #include <assert.h>
 
+void OrdenarVerticesEnBloques(u32* Orden, u32* orden_bloques, u32 r, Grafo G){
+    u32 n = NumeroDeVertices(G);
+    u32* indices = calloc(r, sizeof(u32));
+    u32* vert_por_color = calloc(r, sizeof(u32));
+
+    for (u32 i = 0; i < n; ++i)
+        vert_por_color[Color(i, G) - 1] += 1;
+
+    u32 acum = 0;
+    for (u32 i = 0; i < r; ++i) {
+        color c = orden_bloques[i];
+        indices[c - 1] = acum;
+        acum += vert_por_color[c - 1];
+    }
+
+    for (u32 i = 0; i < n; ++i) {
+        u32 ind = indices[Color(i, G) - 1]++;
+        Orden[ind] = i;
+    }
+
+    free(indices);
+    free(vert_por_color);
+}
+
 u32 CalcularMaxColor(Grafo G)
 {
     u32 max_color = 0;

@@ -1,4 +1,5 @@
 #include "API2024Parte2.h"
+#include "Util.h"
 #include <assert.h>
 #include <stdio.h>
 
@@ -167,32 +168,12 @@ char GulDukat(Grafo G, u32* Orden)
     }
     QuickSort(orden_colores, i_ant, i - 1, orden_m, orden_M, GRUPO_3);
 
-    assert(i == n);
-
     for (u32 i = 0; i < r; ++i) {
         printf("%d ", orden_colores[i]);
     }
     printf("\n");
 
-    // orden_colores tiene el orden x1, ..., xr a utilizar.
-
-    u32* indices = calloc(r, sizeof(u32));
-    u32* vert_por_color = calloc(r, sizeof(u32));
-
-    for (u32 i = 0; i < n; ++i)
-        vert_por_color[Color(i, G) - 1] += 1;
-
-    u32 acum = 0;
-    for (u32 i = 0; i < r; ++i) {
-        color c = orden_colores[i];
-        indices[c - 1] = acum;
-        acum += vert_por_color[c - 1];
-    }
-
-    for (u32 i = 0; i < n; ++i) {
-        u32 ind = indices[Color(i, G) - 1]++;
-        Orden[ind] = i;
-    }
+    OrdenarVerticesEnBloques(Orden, orden_colores, r, G);
 
     for (u32 i = 0; i < r; ++i) {
         printf("%u (%u, %u)\n", orden_colores[i], orden_M[orden_colores[i] - 1], orden_m[orden_colores[i] - 1]);
@@ -203,8 +184,6 @@ char GulDukat(Grafo G, u32* Orden)
     RevisarResultado(orden_colores, r, orden_m, orden_M);
 
     free(orden_colores);
-    free(indices);
-    free(vert_por_color);
     free(orden_M);
     free(orden_m);
 
