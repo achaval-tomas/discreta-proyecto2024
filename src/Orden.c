@@ -70,13 +70,11 @@ void Swap(color* a, u32 i, u32 j)
 u32 Partition(color* a, u32 lft, u32 rgt, u32* m, u32* M, char tipo)
 {
     int piv = lft;
-    u32 i = lft;
-    while (i < rgt){
+    for (u32 i = lft; i < rgt; ++i){
         if (VaAntes(a[i], a[rgt], m , M, tipo)){
             Swap(a, i, piv);
             ++piv;
         }
-        ++i;
     }
 
     Swap(a, rgt, piv);
@@ -91,8 +89,9 @@ void QuickSort(u32* arr, u32 izq, u32 der, u32* m, u32* M, char tipo)
 {
     if (izq < der) {
         u32 ppiv = Partition(arr, izq, der, m, M, tipo);
-        printf("ppiv, lft, rgt: %d %d %d\n", ppiv, izq, der);
-        QuickSort(arr, izq, ppiv - 1, m, M, tipo);
+        //printf("ppiv, lft, rgt: %d %d %d\n", ppiv, izq, der);
+        if (ppiv > 0)
+            QuickSort(arr, izq, ppiv - 1, m, M, tipo);
         QuickSort(arr, ppiv + 1, der, m, M, tipo);
     }
 }
@@ -132,11 +131,6 @@ char GulDukat(Grafo G, u32* Orden)
     u32* orden_M = calloc(r, sizeof(color));
     u32* orden_m = calloc(r, sizeof(color));
 
-    u32* orden_M2 = calloc(r, sizeof(color));
-    u32* orden_m2 = calloc(r, sizeof(color));
-    CompletarOrdenes(orden_M2, orden_m2, r, G);
-
-
     CompletarOrdenes(orden_M, orden_m, r, G);
     /* orden_M contiene el máximo grado de vertice por color.
      * orden_m contiene el mínimo grado de vertice por color.
@@ -173,13 +167,12 @@ char GulDukat(Grafo G, u32* Orden)
     }
     QuickSort(orden_colores, i_ant, i - 1, orden_m, orden_M, GRUPO_3);
 
+    assert(i == n);
+
     for (u32 i = 0; i < r; ++i) {
         printf("%d ", orden_colores[i]);
     }
     printf("\n");
-
-    free(orden_M);
-    free(orden_m);
 
     // orden_colores tiene el orden x1, ..., xr a utilizar.
 
@@ -202,17 +195,18 @@ char GulDukat(Grafo G, u32* Orden)
     }
 
     for (u32 i = 0; i < r; ++i) {
-        printf("%u (%u, %u)\n", orden_colores[i], orden_M2[orden_colores[i] - 1], orden_m2[orden_colores[i] - 1]);
+        printf("%u (%u, %u)\n", orden_colores[i], orden_M[orden_colores[i] - 1], orden_m[orden_colores[i] - 1]);
     }
 
     printf("\n");
     printf("Revisando resultado...\n");
-    RevisarResultado(orden_colores, r, orden_m2, orden_M2);
+    RevisarResultado(orden_colores, r, orden_m, orden_M);
 
     free(orden_colores);
     free(indices);
     free(vert_por_color);
-    free(orden_M2);
-    free(orden_m2);
+    free(orden_M);
+    free(orden_m);
+
     return error;
 }
