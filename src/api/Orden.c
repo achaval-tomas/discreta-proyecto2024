@@ -2,13 +2,10 @@
 #include "Util.h"
 #include <assert.h>
 #include <stdio.h>
+#include <string.h>
 
 #define MAX(x, y) (((x) > (y)) ? (x) : (y))
 #define MIN(x, y) (((x) < (y)) ? (x) : (y))
-
-#define GRUPO_1 '1' // Múltiplos de 4
-#define GRUPO_2 '2' // Pares no divisibles por 4
-#define GRUPO_3 '3' // Impares
 
 void RevisarResultado(color* orden, u32 r, u32* m, u32* M) {
     char mul4 = 1;
@@ -41,61 +38,6 @@ void RevisarResultado(color* orden, u32 r, u32* m, u32* M) {
     }
 }
 
-// Orden de los colores de acuerdo a la consigna
-char VaAntes(color a, color b, u32* m, u32* M, char tipo)
-{
-    u32 ret = 0;
-    switch (tipo) {
-    case GRUPO_1:
-        ret = M[a - 1] >= M[b - 1];
-        break;
-    case GRUPO_2:
-        ret = (m[a - 1] + M[a - 1])
-            >= (m[b - 1] + M[b - 1]);
-        break;
-    case GRUPO_3:
-        ret = m[a - 1] >= m[b - 1];
-        break;
-    }
-
-    return ret;
-}
-
-void Swap(color* a, u32 i, u32 j)
-{
-    color tmp = a[i];
-    a[i] = a[j];
-    a[j] = tmp;
-}
-
-u32 Partition(color* a, u32 lft, u32 rgt, u32* m, u32* M, char tipo)
-{
-    int piv = lft;
-    for (u32 i = lft; i < rgt; ++i){
-        if (VaAntes(a[i], a[rgt], m , M, tipo)){
-            Swap(a, i, piv);
-            ++piv;
-        }
-    }
-
-    Swap(a, rgt, piv);
-    return piv;
-}
-
-/* Quick Sort ordenará el arreglo arr en el orden establecido por
- * la función goes_before utilizando los m y M correspondientes
- * para el tipo seleccionado.
- */
-void QuickSort(u32* arr, u32 izq, u32 der, u32* m, u32* M, char tipo)
-{
-    if (izq < der) {
-        u32 ppiv = Partition(arr, izq, der, m, M, tipo);
-        //printf("ppiv, lft, rgt: %d %d %d\n", ppiv, izq, der);
-        if (ppiv > 0)
-            QuickSort(arr, izq, ppiv - 1, m, M, tipo);
-        QuickSort(arr, ppiv + 1, der, m, M, tipo);
-    }
-}
 
 // Asume que ambos ordenes tienen r lugares de memoria.
 // Complejidad O(n)
@@ -127,8 +69,7 @@ void CompletarTablas(u32* mul4, u32* par, u32* impar, u32 r, Grafo G)
 }
 
 void ConstruirTablaCantColoresMul4(u32* tabla_cant_colores, u32* tabla_mul4, u32 n, u32 r) {
-    for (u32 i = 0; i < 2*n; ++i)
-        tabla_cant_colores[i] = 0;
+    memset(tabla_cant_colores, 0, 2*n*sizeof(u32));
     
     u32 mul4 = 4;
     while (mul4 <= r) {
@@ -139,8 +80,7 @@ void ConstruirTablaCantColoresMul4(u32* tabla_cant_colores, u32* tabla_mul4, u32
 }
 
 void ConstruirTablaCantColoresPar(u32* tabla_cant_colores, u32* tabla_par, u32 n, u32 r) {
-    for (u32 i = 0; i < 2*n; ++i)
-        tabla_cant_colores[i] = 0;
+    memset(tabla_cant_colores, 0, 2*n*sizeof(u32));
     
     u32 par = 2;
     while (par <= r) {
@@ -151,8 +91,7 @@ void ConstruirTablaCantColoresPar(u32* tabla_cant_colores, u32* tabla_par, u32 n
 }
 
 void ConstruirTablaCantColoresImpar(u32* tabla_cant_colores, u32* tabla_impar, u32 n, u32 r) {
-    for (u32 i = 0; i < 2*n; ++i)
-        tabla_cant_colores[i] = 0;
+    memset(tabla_cant_colores, 0, 2*n*sizeof(u32));
     
     u32 impar = 1;
     while (impar <= r) {
@@ -176,7 +115,7 @@ void ConstruirTablaPosiciones(u32* tabla_posiciones, u32* tabla_cantidad, u32 n)
 
 /* Se asume que Orden apunta a una region de memoria con n lugares y
  * que G tiene un coloreo propio con colores {1, 2, .., r} para algún r.
- * Complejidad O(n + r*log(r) + n) ~ O(n)
+ * Complejidad O(n)
  */
 char GulDukat(Grafo G, u32* Orden)
 {
