@@ -70,15 +70,28 @@ int main()
         orden[i] = i;
     
     u32 cols = Greedy(grafo, orden);
-    printf("\nColores Utilizados: %u\n", cols);
+    printf("\nColores Utilizados primer greedy GD: %u\n", cols);
     
-    for (u32 i = 0; i++<3;){
+    u32 iters = 500;
+    for (u32 i = 0; i < iters; ++i){
+
         if (GulDukat(grafo, orden))
             printf("Algo salió mal.");
-
         cols = Greedy(grafo, orden);
-        printf("\nColores Utilizados: %u\n", cols);
     }
+    printf("Colores Utilizados 500 GD: %u\n", cols);
+
+    for (u32 i = 0; i < n; ++i)
+        orden[i] = i;
+    cols = Greedy(grafo, orden);
+    printf("\nColores Utilizados primer greedy EG: %u\n", cols);
+
+    for (u32 i = 0; i < iters; ++i){
+        ElimGarak(grafo, orden);
+        cols = Greedy(grafo, orden);
+    }
+
+    printf("Colores Utilizados 500 EG: %u\n", cols);
 
     free(orden);
     DestruirGrafo(grafo);
