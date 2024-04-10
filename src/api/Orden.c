@@ -99,21 +99,79 @@ void QuickSort(u32* arr, u32 izq, u32 der, u32* m, u32* M, char tipo)
 
 // Asume que ambos ordenes tienen r lugares de memoria.
 // Complejidad O(n)
-void CompletarOrdenes(u32* orden_M, u32* orden_m, u32 r, Grafo G)
+void CompletarTablas(u32* mul4, u32* par, u32* impar, u32 r, Grafo G)
 {
     u32 n = NumeroDeVertices(G);
+    u32* M = calloc(r, sizeof(color));
+    u32* m = calloc(r, sizeof(color));
 
     for (u32 i = 0; i < r; ++i) {
-        orden_M[i] = 0;
-        orden_m[i] = n;
+        M[i] = 0;
+        m[i] = n;
     }
 
     for (u32 i = 0; i < n; ++i) {
         u32 idx = Color(i, G) - 1;
         u32 grado = Grado(i, G);
-        orden_M[idx] = MAX(orden_M[idx], grado);
-        orden_m[idx] = MIN(orden_m[idx], grado);
+        M[idx] = MAX(M[idx], grado);
+        m[idx] = MIN(m[idx], grado);
     }
+
+    for (color c = 1; c <= r; ++c) {
+        mul4[c-1] = M[c-1];
+        par[c-1] = M[c-1] + m[c-1];
+        impar[c-1] = m[c-1];
+    }
+
+    free(M); free(m);
+}
+
+void ConstruirTablaCantColoresMul4(u32* tabla_cant_colores, u32* tabla_mul4, u32 n, u32 r) {
+    for (u32 i = 0; i < 2*n; ++i)
+        tabla_cant_colores[i] = 0;
+    
+    u32 mul4 = 4;
+    while (mul4 <= r) {
+        u32 M = tabla_mul4[mul4-1];
+        tabla_cant_colores[M] += 1;
+        mul4 += 4;
+    }
+}
+
+void ConstruirTablaCantColoresPar(u32* tabla_cant_colores, u32* tabla_par, u32 n, u32 r) {
+    for (u32 i = 0; i < 2*n; ++i)
+        tabla_cant_colores[i] = 0;
+    
+    u32 par = 2;
+    while (par <= r) {
+        u32 M_mas_m = tabla_par[par-1];
+        tabla_cant_colores[M_mas_m] += 1;
+        par += 4;
+    }
+}
+
+void ConstruirTablaCantColoresImpar(u32* tabla_cant_colores, u32* tabla_impar, u32 n, u32 r) {
+    for (u32 i = 0; i < 2*n; ++i)
+        tabla_cant_colores[i] = 0;
+    
+    u32 impar = 1;
+    while (impar <= r) {
+        u32 m = tabla_impar[impar-1];
+        tabla_cant_colores[m] += 1;
+        impar += 2;
+    }
+}
+
+void ConstruirTablaPosiciones(u32* tabla_posiciones, u32* tabla_cantidad, u32 n) {
+    tabla_posiciones[2*n - 1] = 0;
+    u32 i = 2*n-2;
+    while (i != 0) {
+        tabla_posiciones[i] = tabla_posiciones[i+1] +
+                              tabla_cantidad[i+1];
+        --i;
+    }
+    tabla_posiciones[0] = tabla_posiciones[1] +
+                          tabla_cantidad[1];
 }
 
 /* Se asume que Orden apunta a una region de memoria con n lugares y
@@ -129,63 +187,70 @@ char GulDukat(Grafo G, u32* Orden)
     for (u32 i = 0; i < n; ++i)
         r = MAX(Color(i, G), r);
 
-    u32* orden_M = calloc(r, sizeof(color));
-    u32* orden_m = calloc(r, sizeof(color));
+    // tabla_mul4[i] tiene el valor M(i+1)
+    u32* tabla_mul4 = calloc(r, sizeof(u32));
 
-    CompletarOrdenes(orden_M, orden_m, r, G);
-    /* orden_M contiene el máximo grado de vertice por color.
-     * orden_m contiene el mínimo grado de vertice por color.
-     */
+    // tabla_par[i] tiene el valor M(i+1) + m(i+1)
+    u32* tabla_par = calloc(r, sizeof(u32));
+
+    // tabla_impar[i] tiene el valor m(i+1)
+    u32* tabla_impar = calloc(r, sizeof(u32));
+
+    CompletarTablas(tabla_mul4, tabla_par, tabla_impar, r, G);
 
     // Aquí estarán los colores en el orden x1,...,xr
     color* orden_colores = calloc(r, sizeof(color));
 
-    u32 i = 0;
-    u32 mul4 = 4;
-    while (mul4 <= r) {
-        orden_colores[i] = mul4;
-        mul4 += 4;
-        ++i;
-    }
-    QuickSort(orden_colores, 0, i - 1, orden_m, orden_M, GRUPO_1);
+    // tabla_cantidad_colores[i] tiene la cantidad de colores con M(x) == i
+    u32* tabla_cantidad_colores = calloc(2*n, sizeof(u32));
+    ConstruirTablaCantColoresMul4(tabla_cantidad_colores, tabla_mul4, n, r);
 
+    // tabla_posiciones[i] tiene el índice del próx color con M(x) == i
+    u32* tabla_posiciones = calloc(2*n, sizeof(u32));
+    ConstruirTablaPosiciones(tabla_posiciones, tabla_cantidad_colores, n);
 
-    u32 i_ant = i;
-    u32 par = 2;
-    while (par <= r) {
-        orden_colores[i] = par;
-        par += 4;
-        ++i;
+    for (color c = 4; c <= r; c+=4) {
+        u32 M = tabla_mul4[c-1];
+        u32 pos = tabla_posiciones[M];
+        orden_colores[pos] = c;
+        tabla_posiciones[M] += 1;
     }
-    QuickSort(orden_colores, i_ant, i - 1, orden_m, orden_M, GRUPO_2);
 
-    i_ant = i;
-    u32 impar = 1;
-    while (impar <= r) {
-        orden_colores[i] = impar;
-        impar += 2;
-        ++i;
+    u32 cantMul4 = r / 4;
+    // tabla_cantidad_colores[i] tiene la cantidad de colores con M(x) + m(x) == i
+    ConstruirTablaCantColoresPar(tabla_cantidad_colores, tabla_par, n, r);
+    // actualizo tabla_posiciones con esta nueva tabla de colores
+    ConstruirTablaPosiciones(tabla_posiciones, tabla_cantidad_colores, n);
+    for (color c = 2; c <= r; c+=4) {
+        u32 M_mas_m = tabla_par[c-1];
+        u32 pos = tabla_posiciones[M_mas_m];
+        // sumo la cantidad de colores múltiplos de 4 porque estos están antes en el orden
+        orden_colores[pos+cantMul4] = c;
+        tabla_posiciones[M_mas_m] += 1;
     }
-    QuickSort(orden_colores, i_ant, i - 1, orden_m, orden_M, GRUPO_3);
 
-    for (u32 i = 0; i < r; ++i) {
-        printf("%d ", orden_colores[i]);
+    u32 cantPares = r / 2;
+    // tabla_cantidad_colores[i] tiene la cantidad de colores con m(x) == i
+    ConstruirTablaCantColoresImpar(tabla_cantidad_colores, tabla_impar, n, r);
+    // actualizo tabla_posiciones con esta nueva tabla de colores
+    ConstruirTablaPosiciones(tabla_posiciones, tabla_cantidad_colores, n);
+
+    for (color c = 1; c <= r; c+=2) {
+        u32 m = tabla_impar[c-1];
+        u32 pos = tabla_posiciones[m];
+        // sumo la cantidad de colores pares porque estos están antes en el orden
+        orden_colores[pos+cantPares] = c;
+        tabla_posiciones[m] += 1;
     }
-    printf("\n");
 
     OrdenarVerticesEnBloques(Orden, orden_colores, r, G);
 
-    for (u32 i = 0; i < r; ++i) {
-        printf("%u (%u, %u)\n", orden_colores[i], orden_M[orden_colores[i] - 1], orden_m[orden_colores[i] - 1]);
-    }
-
-    printf("\n");
-    printf("Revisando resultado...\n");
-    RevisarResultado(orden_colores, r, orden_m, orden_M);
-
     free(orden_colores);
-    free(orden_M);
-    free(orden_m);
+    free(tabla_cantidad_colores);
+    free(tabla_posiciones);
+    free(tabla_impar);
+    free(tabla_par);
+    free(tabla_mul4);
 
     return error;
 }
