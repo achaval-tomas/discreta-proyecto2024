@@ -15,7 +15,7 @@ CalcularCardinalidades(G, r)[1] representa la cantidad de vértices pintados con
 CalcularCardinalidades(G, r)[r - 1] representa la cantidad de vértices pintados con el color r.
 Complejidad: O(n)
 */
-u32* CalcularCardinalidades(Grafo G, u32 r)
+static u32* CalcularCardinalidades(Grafo G, u32 r)
 {
     u32* cardinalidades = calloc(r, sizeof(u32));
 

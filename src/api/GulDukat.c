@@ -41,7 +41,7 @@ void RevisarResultado(color* orden, u32 r, u32* m, u32* M) {
 
 // Asume que ambos ordenes tienen r lugares de memoria.
 // Complejidad O(n)
-void CompletarTablas(u32* mul4, u32* par, u32* impar, u32 r, Grafo G)
+static void CompletarTablas(u32* mul4, u32* par, u32* impar, u32 r, Grafo G)
 {
     u32 n = NumeroDeVertices(G);
     u32* M = calloc(r, sizeof(color));
@@ -68,7 +68,7 @@ void CompletarTablas(u32* mul4, u32* par, u32* impar, u32 r, Grafo G)
     free(M); free(m);
 }
 
-void ConstruirTablaCantColoresMul4(u32* tabla_cant_colores, u32* tabla_mul4, u32 n, u32 r) {
+static void ConstruirTablaCantColoresMul4(u32* tabla_cant_colores, u32* tabla_mul4, u32 n, u32 r) {
     memset(tabla_cant_colores, 0, 2*n*sizeof(u32));
     
     u32 mul4 = 4;
@@ -79,7 +79,7 @@ void ConstruirTablaCantColoresMul4(u32* tabla_cant_colores, u32* tabla_mul4, u32
     }
 }
 
-void ConstruirTablaCantColoresPar(u32* tabla_cant_colores, u32* tabla_par, u32 n, u32 r) {
+static void ConstruirTablaCantColoresPar(u32* tabla_cant_colores, u32* tabla_par, u32 n, u32 r) {
     memset(tabla_cant_colores, 0, 2*n*sizeof(u32));
     
     u32 par = 2;
@@ -90,7 +90,7 @@ void ConstruirTablaCantColoresPar(u32* tabla_cant_colores, u32* tabla_par, u32 n
     }
 }
 
-void ConstruirTablaCantColoresImpar(u32* tabla_cant_colores, u32* tabla_impar, u32 n, u32 r) {
+static void ConstruirTablaCantColoresImpar(u32* tabla_cant_colores, u32* tabla_impar, u32 n, u32 r) {
     memset(tabla_cant_colores, 0, 2*n*sizeof(u32));
     
     u32 impar = 1;
@@ -101,7 +101,7 @@ void ConstruirTablaCantColoresImpar(u32* tabla_cant_colores, u32* tabla_impar, u
     }
 }
 
-void ConstruirTablaPosiciones(u32* tabla_posiciones, u32* tabla_cantidad, u32 n) {
+static void ConstruirTablaPosiciones(u32* tabla_posiciones, u32* tabla_cantidad, u32 n) {
     tabla_posiciones[2*n - 1] = 0;
     u32 i = 2*n-2;
     while (i != 0) {
