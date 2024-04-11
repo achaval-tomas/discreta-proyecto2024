@@ -83,8 +83,8 @@ void Swap(color* a, u32 i, u32 j)
 u32 Partition(color* a, u32 lft, u32 rgt, u32* m, u32* M, char tipo)
 {
     int piv = lft;
-    for (u32 i = lft; i < rgt; ++i){
-        if (VaAntes(a[i], a[rgt], m , M, tipo)){
+    for (u32 i = lft; i < rgt; ++i) {
+        if (VaAntes(a[i], a[rgt], m, M, tipo)) {
             Swap(a, i, piv);
             ++piv;
         }
@@ -98,7 +98,7 @@ void qSort(u32* arr, u32 izq, u32 der, u32* m, u32* M, char tipo)
 {
     if (izq < der) {
         u32 ppiv = Partition(arr, izq, der, m, M, tipo);
-        //printf("ppiv, lft, rgt: %d %d %d\n", ppiv, izq, der);
+        // printf("ppiv, lft, rgt: %d %d %d\n", ppiv, izq, der);
         if (ppiv > 0)
             qSort(arr, izq, ppiv - 1, m, M, tipo);
         qSort(arr, ppiv + 1, der, m, M, tipo);
@@ -109,7 +109,8 @@ void qSort(u32* arr, u32 izq, u32 der, u32* m, u32* M, char tipo)
  * la función goes_before utilizando los m y M correspondientes
  * para el tipo seleccionado.
  */
-void QuickSort (u32* arr, u32 n, u32* m, u32* M, char tipo){
+void QuickSort(u32* arr, u32 n, u32* m, u32* M, char tipo)
+{
     qSort(arr, 0, n, m, M, tipo);
 }
 

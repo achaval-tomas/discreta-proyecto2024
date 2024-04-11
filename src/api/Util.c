@@ -3,7 +3,8 @@
 #include "Math.h"
 #include <assert.h>
 
-void OrdenarVerticesEnBloques(u32* Orden, u32* orden_bloques, u32 r, Grafo G){
+void OrdenarVerticesEnBloques(u32* Orden, u32* orden_bloques, u32 r, Grafo G)
+{
     u32 n = NumeroDeVertices(G);
     u32* indices = calloc(r, sizeof(u32));
     u32* vert_por_color = calloc(r, sizeof(u32));
@@ -101,7 +102,7 @@ char ChequearGulDukat(Grafo G, u32* Orden)
 {
     char rc = 1;
     u32 n = NumeroDeVertices(G);
-    
+
     u32 r = 0;
     for (u32 i = 0; i < n; ++i)
         r = MAX(Color(i, G), r);
@@ -125,9 +126,9 @@ char ChequearGulDukat(Grafo G, u32* Orden)
     char odd = 0;
 
 
-    for (u32 i = 0; i < n-1; ++i) {
+    for (u32 i = 0; i < n - 1; ++i) {
         u32 v0 = Orden[i];
-        u32 v1 = Orden[i+1];
+        u32 v1 = Orden[i + 1];
         color c0 = Color(v0, G);
         color c1 = Color(v1, G);
 
@@ -135,23 +136,23 @@ char ChequearGulDukat(Grafo G, u32* Orden)
             continue;
 
         if (mul4 && (c1 % 4 == 0)) {
-            if (!(M[c0-1] >= M[c1-1])) {
-                rc = 0; 
+            if (!(M[c0 - 1] >= M[c1 - 1])) {
+                rc = 0;
                 break;
             }
         } else if (mul4 && (c1 % 4 != 0) && (c1 % 2 == 0)) {
             mul4 = 0;
             even = 1;
         } else if (even && (c1 % 2 == 0)) {
-            if (!(M[c0-1] + m[c0-1] >= M[c1-1] + m[c1-1])) {
-                rc = 0; 
+            if (!(M[c0 - 1] + m[c0 - 1] >= M[c1 - 1] + m[c1 - 1])) {
+                rc = 0;
                 break;
             }
         } else if (even && (c1 % 2 != 0)) {
             even = 0;
             odd = 1;
         } else if (odd && (c1 % 2 == 1)) {
-            if(!(m[c0-1] >= m[c1-1])) {
+            if (!(m[c0 - 1] >= m[c1 - 1])) {
                 rc = 0;
                 break;
             }
@@ -161,6 +162,7 @@ char ChequearGulDukat(Grafo G, u32* Orden)
         }
     }
 
-    free(m); free(M);
+    free(m);
+    free(M);
     return rc;
 }

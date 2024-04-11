@@ -67,7 +67,6 @@ int main(void)
     printf("\n");
 
 
-
     if (!ChequearReordenamientoVIT(grafo, orden)) {
         printf("No es un orden VIT!!!!\n");
         free(orden);
