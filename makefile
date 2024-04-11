@@ -45,28 +45,29 @@ DEF_SANITIZE_EXECUTABLE=$(word 1,$(SANITIZE_EXECUTABLES))
 DEF_RELEASE_EXECUTABLE=$(word 1,$(RELEASE_EXECUTABLES))
 
 # Se puede cambiar el archivo usando 'make run i=grafo.txt'
-i=K5.txt
+g?=K5.txt
+iters?=
 
 build: ${DEF_DEBUG_EXECUTABLE}
 
 run: $(DEF_DEBUG_EXECUTABLE)
-	valgrind ${VALGRIND_OPTIONS} ./$(DEF_DEBUG_EXECUTABLE) < ${i}
+	valgrind ${VALGRIND_OPTIONS} ./$(DEF_DEBUG_EXECUTABLE) ${iters} < ${g}
 
 sanitize: ${DEF_SANITIZE_EXECUTABLE}
-	./${DEF_SANITIZE_EXECUTABLE} < ${i}
+	./${DEF_SANITIZE_EXECUTABLE} ${iters} < ${g}
 
 release: ${DEF_RELEASE_EXECUTABLE}
-	./${DEF_RELEASE_EXECUTABLE} < ${i}
+	./${DEF_RELEASE_EXECUTABLE} ${iters} < ${g}
 
 RUN_TARGETS=$(addprefix run_,$(MAIN_NAMES))
 SANITIZE_TARGETS=$(addprefix sanitize_,$(MAIN_NAMES))
 RELEASE_TARGETS=$(addprefix release_,$(MAIN_NAMES))
 
 ${RUN_TARGETS}: run_%: $(DEBUG_DIR)/%
-	valgrind ${VALGRIND_OPTIONS} ./$< < ${i}
+	valgrind ${VALGRIND_OPTIONS} ./$< ${iters} < ${g}
 
 ${SANITIZE_TARGETS}: sanitize_%: $(SANITIZE_DIR)/%
-	./$< < ${i}
+	./$< ${iters} < ${i}
 
 ${RELEASE_TARGETS}: release_%: $(RELEASE_DIR)/%
-	./$< < ${i}
+	./$< ${iters} < ${i}

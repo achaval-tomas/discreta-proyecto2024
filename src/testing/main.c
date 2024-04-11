@@ -53,7 +53,7 @@ void ImprimirColores(Grafo g)
     free(Colores);
 }
 
-int main()
+int main(int argc, char* argv[])
 {
     Grafo grafo = ConstruirGrafo();
 
@@ -62,39 +62,42 @@ int main()
         return EXIT_FAILURE;
     }
 
-    //ImprimirGrafo(grafo);
+    // ImprimirGrafo(grafo);
+
+    u32 iters = 10; // default
+    if (argc == 2)
+        iters = atoi(argv[1]);
+    printf("\nIniciando test con %u iteraciones de GulDukat y ElimGarak...\n", iters);
 
     u32 n = NumeroDeVertices(grafo);
     u32* orden = calloc(n, sizeof(u32));
-    for (u32 i = 0; i<n; ++i)
+    for (u32 i = 0; i < n; ++i)
         orden[i] = i;
-    
-    u32 cols = Greedy(grafo, orden);
-    printf("\nColores Utilizados primer greedy GD: %u\n", cols);
-    
-    u32 iters = 500;
-    for (u32 i = 0; i < iters; ++i){
 
+    u32 cols = Greedy(grafo, orden);
+    printf("\nColores Utilizados primer greedy GulDukat: %u\n", cols);
+
+    for (u32 i = 0; i < iters; ++i) {
         if (GulDukat(grafo, orden))
             printf("Algo salió mal.");
         cols = Greedy(grafo, orden);
     }
-    printf("Colores Utilizados 500 GD: %u\n", cols);
+    printf("Colores Utilizados después de %u GulDukat: %u\n", iters, cols);
 
     for (u32 i = 0; i < n; ++i)
         orden[i] = i;
     cols = Greedy(grafo, orden);
-    printf("\nColores Utilizados primer greedy EG: %u\n", cols);
+    printf("\nColores Utilizados primer greedy ElimGarak: %u\n", cols);
 
-    for (u32 i = 0; i < iters; ++i){
-        ElimGarak(grafo, orden);
+    for (u32 i = 0; i < iters; ++i) {
+        if (ElimGarak(grafo, orden))
+            printf("Algo salió mal.");
         cols = Greedy(grafo, orden);
     }
-
-    printf("Colores Utilizados 500 EG: %u\n", cols);
+    printf("Colores Utilizados después de %u ElimGarak: %u\n", iters, cols);
 
     free(orden);
     DestruirGrafo(grafo);
-
-    return 0;
+    printf("\n");
+    return EXIT_SUCCESS;
 }
