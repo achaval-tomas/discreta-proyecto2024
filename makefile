@@ -67,7 +67,7 @@ ${RUN_TARGETS}: run_%: $(DEBUG_DIR)/%
 	valgrind ${VALGRIND_OPTIONS} ./$< ${iters} < ${g}
 
 ${SANITIZE_TARGETS}: sanitize_%: $(SANITIZE_DIR)/%
-	./$< ${iters} < ${i}
+	./$< ${iters} < ${g}
 
 ${RELEASE_TARGETS}: release_%: $(RELEASE_DIR)/%
-	./$< ${iters} < ${i}
+	./$< ${iters} < ${g}
