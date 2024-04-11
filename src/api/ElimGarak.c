@@ -51,8 +51,8 @@ static void OrdenarVerticesPorColoresConOrden(Grafo G, u32 r, const u32* orden_c
 {
     u32 n = NumeroDeVertices(G);
 
-    // orden_colores: { 1, ..., r } -> { x1, ..., xr }
-    // orden_colores_inv: { x1, ..., xr } -> { 1, ..., r }
+    // orden_colores: { x1, ..., xr } -> { 1, ..., r }
+    // orden_colores_inv: { 1, ..., r } -> { x1, ..., xr }
     u32* orden_colores_inv = calloc(r, sizeof(u32));
     for (u32 i = 1; i <= r; i++) {
         u32 x_i = orden_colores[i - 1];
