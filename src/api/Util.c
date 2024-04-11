@@ -27,17 +27,16 @@ void OrdenarVerticesEnBloques(u32* Orden, u32* orden_bloques, u32 r, Grafo G){
     free(vert_por_color);
 }
 
-u32 CalcularMaxColor(Grafo G)
+color CalcularMaxColor(Grafo G)
 {
-    u32 max_color = 0;
-    for (u32 v = 0; v < NumeroDeVertices(G); v++) {
-        assert(Color(v, G) != 0); // TODO
+    u32 n = NumeroDeVertices(G);
+    color max_color = 0;
+    for (u32 v = 0; v < n; v++) {
         max_color = MAX(max_color, Color(v, G));
     }
     return max_color;
 }
 
-// Chequear que el orden dado es un orden válido.
 char ChequearOrden(u32* Orden, u32 n)
 {
     char* found_flags = calloc(n, sizeof(char));

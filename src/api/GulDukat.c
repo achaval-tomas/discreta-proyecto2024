@@ -119,12 +119,9 @@ void ConstruirTablaPosiciones(u32* tabla_posiciones, u32* tabla_cantidad, u32 n)
  */
 char GulDukat(Grafo G, u32* Orden)
 {
-    u32 n = NumeroDeVertices(G);
     char error = 0;
-
-    u32 r = 0;
-    for (u32 i = 0; i < n; ++i)
-        r = MAX(Color(i, G), r);
+    u32 n = NumeroDeVertices(G);
+    u32 r = CalcularMaxColor(G);
 
     // tabla_mul4[i] tiene el valor M(i+1)
     u32* tabla_mul4 = calloc(r, sizeof(u32));

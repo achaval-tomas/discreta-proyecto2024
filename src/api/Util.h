@@ -5,7 +5,7 @@
 
 /*
 Ordena los n vertices del grafo G por el orden de los colores en orden_bloques.
-se asume que Orden tiene n lugares de memoria y orden_bloques r.
+Se asume que Orden tiene n lugares de memoria y orden_bloques r.
 Complejidad: O(n)
 */
 void OrdenarVerticesEnBloques(u32* Orden, u32* orden_bloques, u32 r, Grafo G);
@@ -14,11 +14,17 @@ void OrdenarVerticesEnBloques(u32* Orden, u32* orden_bloques, u32 r, Grafo G);
 G debe ser un grafo previamente coloreado por Greedy.
 Complejidad: O(n)
 */
-u32 CalcularMaxColor(Grafo G);
+color CalcularMaxColor(Grafo G);
 
+/*
+Se verifica que Orden sea un ordenamiento de vértices válido,
+es decir que sea una permutación del conjunto {0, 1, ..., n-1}
+Complejidad: O(n)
+*/
 char ChequearOrden(u32* Orden, u32 n);
-char ChequearReordenamientoVIT(Grafo G, u32* Orden);
 
+/* Funciones de testeo */
+char ChequearReordenamientoVIT(Grafo G, u32* Orden);
 char ChequearGulDukat(Grafo G, u32* Orden);
 
 #endif
