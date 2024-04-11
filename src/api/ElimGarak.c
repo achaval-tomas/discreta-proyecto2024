@@ -5,7 +5,6 @@
 #include <assert.h>
 #include <string.h>
 
-
 /*
 Dado un grafo G con r colores { 1, ..., r }, devuelve un arreglo
 donde el índice representa (color - 1) y el valor representa la
@@ -28,48 +27,52 @@ u32* CalcularCardinalidades(Grafo G, u32 r)
     return cardinalidades;
 }
 
-void InicializarOrden(u32* Orden, u32 n)
+static void OrdenarColoresPorCardinalidadVerElimGarak(Grafo G, u32 r, u32* orden_colores)
 {
-    for (u32 v = 0; v < n; v++) {
-        Orden[v] = 0;
-    }
+    u32 n = NumeroDeVertices(G);
+    u32* tabla_cardinalidades = CalcularCardinalidades(G, r);
+    // NOTE: n es la máxima cardinalidad posible (se podría acotar más),
+    // por eso es que asignamos n + 2 y n + 1.
+    tabla_cardinalidades[0] = n + 2; // 1 -> xr
+    tabla_cardinalidades[1] = n + 1; // 2 -> xr-1
+
+    for (u32 i = 0; i < r; i++)
+        orden_colores[i] = i + 1;
+
+    LINEAR_SORT(orden_colores, r, n + 2, c, card, {
+        // Mapeamos el color a su cardinalidad
+        card = tabla_cardinalidades[c - 1];
+    });
+
+    free(tabla_cardinalidades);
 }
 
-struct ElimGarakCmpData {
-    Grafo G;
-    const u32* cardinalidades;
-};
-
-int CmpVerticesPorColor(u32 lhs, u32 rhs, void* user_data)
+static void OrdenarVerticesPorColoresConOrden(Grafo G, u32 r, const u32* orden_colores, u32* Orden)
 {
-    struct ElimGarakCmpData* data = (struct ElimGarakCmpData*)(user_data);
-    Grafo G = data->G;
+    u32 n = NumeroDeVertices(G);
 
-    u32 col_lhs = Color(lhs, G);
-    u32 col_rhs = Color(rhs, G);
-
-    return col_lhs - col_rhs;
-}
-
-int CmpVerticesPorCardinalidad(u32 lhs, u32 rhs, void* user_data)
-{
-    struct ElimGarakCmpData* data = (struct ElimGarakCmpData*)(user_data);
-    Grafo G = data->G;
-    const u32* cardinalidades = data->cardinalidades;
-
-    u32 col_lhs = Color(lhs, G);
-    u32 col_rhs = Color(rhs, G);
-
-    u32 card_lhs = cardinalidades[col_lhs - 1];
-    u32 card_rhs = cardinalidades[col_rhs - 1];
-
-    if (card_lhs < card_rhs) {
-        return -1;
-    } else if (card_lhs > card_rhs) {
-        return 1;
-    } else {
-        return 0;
+    // orden_colores: { 1, ..., r } -> { x1, ..., xr }
+    // orden_colores_inv: { x1, ..., xr } -> { 1, ..., r }
+    u32* orden_colores_inv = calloc(r, sizeof(u32));
+    for (u32 i = 1; i <= r; i++) {
+        u32 x_i = orden_colores[i - 1];
+        assert(1 <= x_i);
+        assert(x_i <= r);
+        assert(orden_colores_inv[x_i - 1] == 0);
+        orden_colores_inv[x_i - 1] = i;
     }
+
+    for (u32 i = 0; i < n; i++)
+        Orden[i] = i;
+
+    LINEAR_SORT(Orden, n, r - 1, v, x_c, {
+        // Mapeamos el vertice v a la posición de su
+        // color en el orden orden_colores
+        u32 c = Color(v, G);
+        x_c = orden_colores_inv[c - 1] - 1;
+    });
+
+    free(orden_colores_inv);
 }
 
 char ElimGarak(Grafo G, u32* Orden)
@@ -77,41 +80,13 @@ char ElimGarak(Grafo G, u32* Orden)
     u32 n = NumeroDeVertices(G);
     u32 r = CalcularMaxColor(G);
 
+    // TODO: remove (sanity check).
     memset(Orden, ~0, n * sizeof(u32));
 
-    u32* tabla_cardinalidades = CalcularCardinalidades(G, r);
-
-    u32* tabla_cantidades_colores = calloc(n + 1, sizeof(u32));
-    for (u32 c = 0; c < r; c++) {
-        u32 card = tabla_cardinalidades[c];
-        tabla_cantidades_colores[card] += 1;
-    }
-    // tabla_cantidades_colores[i] tiene la cantidad de colores
-    // de cardinalidad == i
-
-    u32* tabla_posiciones_colores = calloc(n + 1, sizeof(u32));
-    for (u32 i = 1; i < n + 1; i++) {
-        tabla_posiciones_colores[i] = tabla_posiciones_colores[i - 1]
-            + tabla_cantidades_colores[i - 1];
-    }
-    // tabla_posiciones_colores[i] tiene la cantidad (acumulada)
-    // de colores con cardinalidad <= i
-
     u32* orden_colores = malloc(r * sizeof(u32));
-    for (u32 c = 1; c <= r; c++) {
-        u32 card = tabla_cardinalidades[c - 1];
-        u32 pos = tabla_posiciones_colores[card];
-        tabla_posiciones_colores[card] += 1;
-        orden_colores[pos] = c;
-    }
-    // orden_colores: { 1, ..., r } -> { x1, ..., xr }
-    // orden_colores tiene x1, ..., xr
+    OrdenarColoresPorCardinalidadVerElimGarak(G, r, orden_colores);
+    OrdenarVerticesPorColoresConOrden(G, r, orden_colores, Orden);
 
-    OrdenarVerticesEnBloques(Orden, orden_colores, r, G);
-
-    free(tabla_cardinalidades);
-    free(tabla_cantidades_colores);
-    free(tabla_posiciones_colores);
     free(orden_colores);
     return 0;
 }

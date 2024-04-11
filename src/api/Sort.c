@@ -112,3 +112,38 @@ void qSort(u32* arr, u32 izq, u32 der, u32* m, u32* M, char tipo)
 void QuickSort (u32* arr, u32 n, u32* m, u32* M, char tipo){
     qSort(arr, 0, n, m, M, tipo);
 }
+
+void LinearSort(u32* arr, u32 length, u32 map_max, u32 (*map)(u32, void*), void* user_data)
+{
+    u32* occurrences = calloc(map_max + 1, sizeof(u32));
+    for (u32 i = 0; i < length; i++) {
+        u32 value = arr[i];
+        u32 mapped = map(value, user_data);
+
+        assert(mapped <= map_max);
+
+        occurrences[mapped] += 1;
+    }
+
+    u32* positions = calloc(map_max + 1, sizeof(u32));
+    for (u32 i = 1; i <= map_max; i++) {
+        positions[i] = positions[i - 1] + occurrences[i - 1];
+    }
+
+    u32* buf = malloc(length * sizeof(u32));
+
+    for (u32 i = 0; i < length; i++) {
+        u32 value = arr[i];
+        u32 mapped = map(value, user_data);
+
+        u32 pos = positions[mapped];
+        positions[mapped] += 1;
+
+        buf[pos] = value;
+    }
+
+    memcpy(arr, buf, length * sizeof(u32));
+    free(occurrences);
+    free(positions);
+    free(buf);
+}
