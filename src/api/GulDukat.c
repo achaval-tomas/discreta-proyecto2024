@@ -39,9 +39,10 @@ void RevisarResultado(color* orden, u32 r, u32* m, u32* M)
     }
 }
 
-
-// Asume que ambos ordenes tienen r lugares de memoria.
-// Complejidad O(n)
+/*
+Asume que par, impar y mul4 apuntan c/u a una region de memoria con r lugares.
+Complejidad: O(n)
+*/
 static void CompletarTablas(u32* mul4, u32* par, u32* impar, u32 r, Grafo G)
 {
     u32 n = NumeroDeVertices(G);
@@ -117,10 +118,6 @@ static void ConstruirTablaPosiciones(u32* tabla_posiciones, u32* tabla_cantidad,
     tabla_posiciones[0] = tabla_posiciones[1] + tabla_cantidad[1];
 }
 
-/* Se asume que Orden apunta a una region de memoria con n lugares y
- * que G tiene un coloreo propio con colores {1, 2, .., r} para algún r.
- * Complejidad O(n)
- */
 char GulDukat(Grafo G, u32* Orden)
 {
     char error = 0;
