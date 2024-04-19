@@ -37,11 +37,12 @@ map is a scope which has available u32 x and u32 f_x.
             _occurrences_[f_x] += 1;                             \
         }                                                        \
                                                                  \
-        u32 accumulator = 0;                                     \
+        /* convert occurrences into their prefix sums */         \
+        u32 _accumulator_ = 0;                                   \
         for (u32 _i_ = 0; _i_ <= _f_x_max_; _i_++) {             \
             u32 _tmp_ = _occurrences_[_i_];                      \
-            _occurrences_[_i_] = accumulator;                    \
-            accumulator += _tmp_;                                \
+            _occurrences_[_i_] = _accumulator_;                  \
+            _accumulator_ += _tmp_;                              \
         }                                                        \
                                                                  \
         /* rename for clarity */                                 \
