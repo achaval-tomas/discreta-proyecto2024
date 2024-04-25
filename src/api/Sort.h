@@ -2,6 +2,8 @@
 #define SORT_H
 
 #include "APIG24.h"
+#include <assert.h>
+#include <string.h>
 
 typedef int (*CmpFn)(u32 lhs, u32 rhs, void* user_data);
 
