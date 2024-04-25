@@ -1,5 +1,5 @@
 LIB_FILES=Grafo.c Vertice.c Coloreo.c Greedy.c GulDukat.c ElimGarak.c Sort.c Sort.h Util.h Util.c
-MAIN_FILES=main.c test_sort.c test_elim_garak.c test_gul_dukat.c
+MAIN_FILES=main.c test_sort.c test_elim_garak.c test_gul_dukat.c main_entrega.c
 
 COMMON_ARGS=-Wall -Wextra -Werror -std=c99
 DEBUG_ARGS=-g
