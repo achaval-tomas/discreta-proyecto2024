@@ -12,10 +12,8 @@ static void ResetearColores(Grafo G)
 }
 
 // Asume que el color 0 significa que el vértice no está pintado.
-static u32 ProximoColor(Grafo G, u32 v, u32 n_colores)
+static u32 ProximoColor(Grafo G, u32 v, u32 n_colores, u32* flags)
 {
-    char* flags = calloc(n_colores, sizeof(char));
-
     u32 grado = Grado(v, G);
 
     for (u32 i = 0; i < grado; ++i) {
@@ -23,15 +21,14 @@ static u32 ProximoColor(Grafo G, u32 v, u32 n_colores)
         u32 color_vecino = Color(vecino, G);
 
         if (color_vecino > 0) {
-            flags[color_vecino - 1] = 1;
+            flags[color_vecino - 1] = v+1;
         }
     }
 
     u32 min_color = 1;
-    while (min_color <= n_colores && flags[min_color - 1])
+    while (min_color <= n_colores && flags[min_color - 1] == v+1)
         ++min_color;
 
-    free(flags);
     return min_color;
 }
 
@@ -44,14 +41,17 @@ u32 Greedy(Grafo G, u32* Orden)
 
     ResetearColores(G);
 
+    u32 delta = Delta(G);
+    u32* flags = calloc(delta+1, sizeof(u32));
     u32 num_colores = 0;
 
     for (u32 i = 0; i < n; ++i) {
         u32 v = Orden[i];
-        u32 lowest_color = ProximoColor(G, v, num_colores);
+        u32 lowest_color = ProximoColor(G, v, num_colores, flags);
         AsignarColor(lowest_color, v, G);
         num_colores = MAX(lowest_color, num_colores);
     }
 
+    free(flags);
     return num_colores;
 }
