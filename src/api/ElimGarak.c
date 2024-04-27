@@ -47,34 +47,6 @@ static void OrdenarColoresPorCardinalidadVerElimGarak(Grafo G, u32 r, u32* orden
     free(tabla_cardinalidades);
 }
 
-static void OrdenarVerticesPorColoresConOrden(Grafo G, u32 r, const u32* orden_colores, u32* Orden)
-{
-    u32 n = NumeroDeVertices(G);
-
-    // orden_colores: { x1, ..., xr } -> { 1, ..., r }
-    // orden_colores_inv: { 1, ..., r } -> { x1, ..., xr }
-    u32* orden_colores_inv = calloc(r, sizeof(u32));
-    for (u32 i = 1; i <= r; i++) {
-        u32 x_i = orden_colores[i - 1];
-        assert(1 <= x_i);
-        assert(x_i <= r);
-        assert(orden_colores_inv[x_i - 1] == 0);
-        orden_colores_inv[x_i - 1] = i;
-    }
-
-    for (u32 i = 0; i < n; i++)
-        Orden[i] = i;
-
-    LINEAR_SORT(Orden, n, r - 1, v, x_c, {
-        // Mapeamos el vertice v a la posición de su
-        // color en el orden orden_colores
-        u32 c = Color(v, G);
-        x_c = orden_colores_inv[c - 1] - 1;
-    });
-
-    free(orden_colores_inv);
-}
-
 char ElimGarak(Grafo G, u32* Orden)
 {
     u32 n = NumeroDeVertices(G);
@@ -85,7 +57,7 @@ char ElimGarak(Grafo G, u32* Orden)
 
     u32* orden_colores = malloc(r * sizeof(u32));
     OrdenarColoresPorCardinalidadVerElimGarak(G, r, orden_colores);
-    OrdenarVerticesPorColoresConOrden(G, r, orden_colores, Orden);
+    OrdenarVerticesEnBloques(Orden, orden_colores, r, G);
 
     free(orden_colores);
     return 0;
