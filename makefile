@@ -71,3 +71,7 @@ ${SANITIZE_TARGETS}: sanitize_%: $(SANITIZE_DIR)/%
 
 ${RELEASE_TARGETS}: release_%: $(RELEASE_DIR)/%
 	./$< ${iters} < ${g}
+
+win:
+	gcc -Wall -Werror -Wextra -std=c99 -o test src/api/*.c src/testing/main_entrega.c -I src/api
+	test < ${g}
