@@ -11,7 +11,11 @@ static void ResetearColores(Grafo G)
     free(colores);
 }
 
-// Asume que el color 0 significa que el vértice no está pintado.
+/*
+Asume que el color 0 significa que el vértice no está pintado
+y que flags tiene espacio suficiente para todos los colores (delta+1).
+Devuelve el mínimo color disponible para el vertice v.
+*/
 static u32 ProximoColor(Grafo G, u32 v, u32 n_colores, u32* flags)
 {
     u32 grado = Grado(v, G);
@@ -41,10 +45,12 @@ u32 Greedy(Grafo G, u32* Orden)
 
     ResetearColores(G);
 
-    u32 delta = Delta(G);
-    u32* flags = calloc(delta+1, sizeof(u32));
-    u32 num_colores = 0;
+    u32* flags = calloc(Delta(G)+1, sizeof(u32));
+    // flags será utilizado por ProximoColor para buscar
+    // el menor color disponible, (1 <= c <= delta+1) pues
+    // Greedy colorea en <= Delta(G)+1 colores
 
+    u32 num_colores = 0;
     for (u32 i = 0; i < n; ++i) {
         u32 v = Orden[i];
         u32 lowest_color = ProximoColor(G, v, num_colores, flags);
