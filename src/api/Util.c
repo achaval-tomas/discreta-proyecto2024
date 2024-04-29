@@ -6,12 +6,19 @@
 void OrdenarVerticesEnBloques(u32* Orden, u32* orden_bloques, u32 r, Grafo G)
 {
     u32 n = NumeroDeVertices(G);
-    u32* indices = calloc(r, sizeof(u32));
-    u32* vert_por_color = calloc(r, sizeof(u32));
 
+    // indices[c-1] tendrá el próximo indice en el cuál
+    // se debe colocar un vértice del color c.
+    u32* indices = calloc(r, sizeof(u32));
+
+    // vert_por_color[c-1] contiene la cantidad de vertices
+    // coloreados con el color c.
+    u32* vert_por_color = calloc(r, sizeof(u32));
     for (u32 i = 0; i < n; ++i)
         vert_por_color[Color(i, G) - 1] += 1;
 
+    // utilizamos el orden de los bloques de colores
+    // llenar indices[] acorde a su definición.
     u32 acum = 0;
     for (u32 i = 0; i < r; ++i) {
         color c = orden_bloques[i];
@@ -20,6 +27,7 @@ void OrdenarVerticesEnBloques(u32* Orden, u32* orden_bloques, u32 r, Grafo G)
     }
 
     for (u32 i = 0; i < n; ++i) {
+        // se guarda indice actual, luego se incrementa en 1.
         u32 ind = indices[Color(i, G) - 1]++;
         Orden[ind] = i;
     }

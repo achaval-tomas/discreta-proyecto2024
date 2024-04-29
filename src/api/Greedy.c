@@ -47,7 +47,7 @@ u32 Greedy(Grafo G, u32* Orden)
 
     u32* flags = calloc(Delta(G)+1, sizeof(u32));
     // flags será utilizado por ProximoColor para buscar
-    // el menor color disponible, (1 <= c <= delta+1) pues
+    // el menor color c disponible, (1 <= c <= delta+1) pues
     // Greedy colorea en <= Delta(G)+1 colores
 
     u32 num_colores = 0;
