@@ -121,9 +121,9 @@ char ChequearGulDukat(Grafo G, u32* Orden)
         m[idx] = MIN(m[idx], grado);
     }
 
-    char mul4 = 1;
-    char even = 0;
-    char odd = 0;
+    char mul4 = (r >= 4) ? 1 : 0;
+    char even = (4 > r && r >= 2) ? 1 : 0;
+    char odd = (r == 1) ? 1 : 0;
 
 
     for (u32 i = 0; i < n - 1; ++i) {
