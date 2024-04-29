@@ -29,7 +29,7 @@ static u32 ProximoColor(Grafo G, u32 v, u32 n_colores, u32* flags)
         }
     }
 
-    u32 min_color = 1;
+    color min_color = 1;
     while (min_color <= n_colores && flags[min_color - 1] == v+1)
         ++min_color;
 
