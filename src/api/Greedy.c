@@ -53,9 +53,9 @@ u32 Greedy(Grafo G, u32* Orden)
     u32 num_colores = 0;
     for (u32 i = 0; i < n; ++i) {
         u32 v = Orden[i];
-        u32 lowest_color = ProximoColor(G, v, num_colores, flags);
-        AsignarColor(lowest_color, v, G);
-        num_colores = MAX(lowest_color, num_colores);
+        u32 color_v = ProximoColor(G, v, num_colores, flags);
+        AsignarColor(color_v, v, G);
+        num_colores = MAX(color_v, num_colores);
     }
 
     free(flags);
