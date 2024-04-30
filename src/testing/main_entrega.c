@@ -1,6 +1,7 @@
 #include "API2024Parte2.h"
 #include <stdio.h>
 #include <time.h>
+#include <assert.h>
 #include "Sort.h"
 
 u32 CorrerIteraciones(Grafo g, u32* orden)
@@ -138,9 +139,11 @@ int main(void)
     { // Cuarto caso: vertices por su grado decreciente.
         u32 delta = Delta(g);
 
-        LINEAR_SORT(ordenes[3], n, delta, v, d, {
+        int res;
+        LINEAR_SORT(res, ordenes[3], n, delta, v, d, {
             d = delta - Grado(v, g);
         });
+        assert(res == 0);
     }
 
     { // Quinto caso: orden cocktail (0, n-1, 1, n-2, 2, n-3, ...).

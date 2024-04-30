@@ -18,6 +18,8 @@ Complejidad: O(n)
 static u32* CalcularCardinalidades(Grafo G, u32 r)
 {
     u32* cardinalidades = calloc(r, sizeof(u32));
+    if (cardinalidades == NULL)
+        return NULL;
 
     for (u32 v = 0; v < NumeroDeVertices(G); v++) {
         u32 c = Color(v, G);
@@ -27,10 +29,14 @@ static u32* CalcularCardinalidades(Grafo G, u32 r)
     return cardinalidades;
 }
 
-static void OrdenarColoresPorCardinalidadVerElimGarak(Grafo G, u32 r, u32* orden_colores)
+/* Returns 0 if successful, 1 if error */
+static char OrdenarColoresPorCardinalidadVerElimGarak(Grafo G, u32 r, u32* orden_colores)
 {
     u32 n = NumeroDeVertices(G);
     u32* tabla_cardinalidades = CalcularCardinalidades(G, r);
+    if (tabla_cardinalidades == NULL)
+        return 1;
+
     // NOTE: n es la máxima cardinalidad posible (se podría acotar más),
     // por eso es que asignamos n + 2 y n + 1.
     tabla_cardinalidades[0] = n + 2; // 1 -> xr
@@ -39,26 +45,33 @@ static void OrdenarColoresPorCardinalidadVerElimGarak(Grafo G, u32 r, u32* orden
     for (u32 i = 0; i < r; i++)
         orden_colores[i] = i + 1;
 
-    LINEAR_SORT(orden_colores, r, n + 2, c, card, {
+    int res;
+    LINEAR_SORT(res, orden_colores, r, n + 2, c, card, {
         // Mapeamos el color a su cardinalidad
         card = tabla_cardinalidades[c - 1];
     });
 
     free(tabla_cardinalidades);
+    return res;
 }
 
 char ElimGarak(Grafo G, u32* Orden)
-{
-    u32 n = NumeroDeVertices(G);
+{   
+    char res = 1;
     u32 r = CalcularMaxColor(G);
 
-    // TODO: remove (sanity check).
-    memset(Orden, ~0, n * sizeof(u32));
-
     u32* orden_colores = malloc(r * sizeof(u32));
-    OrdenarColoresPorCardinalidadVerElimGarak(G, r, orden_colores);
+    if (orden_colores == NULL)
+        goto error;
+
+    if (OrdenarColoresPorCardinalidadVerElimGarak(G, r, orden_colores) != 0)
+        goto error;
+    // TODO: chequear esto
     OrdenarVerticesEnBloques(Orden, orden_colores, r, G);
 
+    res = 0;
+
+error:
     free(orden_colores);
-    return 0;
+    return res;
 }

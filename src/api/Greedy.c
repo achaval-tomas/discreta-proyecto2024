@@ -4,11 +4,14 @@
 #include <stdlib.h>
 
 // Colorear todos los vertices con 0.
-static void ResetearColores(Grafo G)
+static char ResetearColores(Grafo G)
 {
     u32* colores = calloc(NumeroDeVertices(G), sizeof(u32));
+    if (colores == NULL)
+        return 1;
     ImportarColores(colores, G);
     free(colores);
+    return 0;
 }
 
 /*
@@ -25,12 +28,12 @@ static u32 ProximoColor(Grafo G, u32 v, u32 n_colores, u32* flags)
         u32 color_vecino = Color(vecino, G);
 
         if (color_vecino > 0) {
-            flags[color_vecino - 1] = v+1;
+            flags[color_vecino - 1] = v + 1;
         }
     }
 
     color min_color = 1;
-    while (min_color <= n_colores && flags[min_color - 1] == v+1)
+    while (min_color <= n_colores && flags[min_color - 1] == v + 1)
         ++min_color;
 
     return min_color;
@@ -40,18 +43,23 @@ static u32 ProximoColor(Grafo G, u32 v, u32 n_colores, u32* flags)
 u32 Greedy(Grafo G, u32* Orden)
 {
     u32 n = NumeroDeVertices(G);
+    
+    // si Orden no es una biyección, retornamos error
     if (!ChequearOrden(Orden, n))
         return -1;
 
-    ResetearColores(G);
+    if (ResetearColores(G))
+        return -1;
 
-    u32* flags = calloc(Delta(G)+1, sizeof(u32));
     // flags será utilizado por ProximoColor para buscar
-    // el menor color c disponible, (1 <= c <= delta+1) pues
-    // Greedy colorea en <= Delta(G)+1 colores
+    // el menor color c disponible, (1 <= c <= delta + 1) pues
+    // Greedy colorea en <= Delta(G) + 1 colores 
+    u32* flags = calloc(Delta(G) + 1, sizeof(u32));
+    if (flags == NULL)
+        return -1;
 
     u32 num_colores = 0;
-    for (u32 i = 0; i < n; ++i) {
+    for (u32 i = 0; i < n; i++) {
         u32 v = Orden[i];
         u32 color_v = ProximoColor(G, v, num_colores, flags);
         AsignarColor(color_v, v, G);

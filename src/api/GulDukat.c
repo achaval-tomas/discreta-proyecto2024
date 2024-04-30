@@ -81,17 +81,25 @@ static void ConstruirTablaPosiciones(u32* tabla_posiciones, u32* tabla_cantidad,
 
 char GulDukat(Grafo G, u32* Orden)
 {
-    char error = 0;
+    char rc = 1;
     color r = CalcularMaxColor(G);
-    
+
     // tabla_M[i] = M(i+1) = máx{Grado(j, G) : Color(j, G) == i+1}
     // tabla_m[i] = m(i+1) = min{Grado(j, G) : Color(j, G) == i+1}
     u32* tabla_M = calloc(r, sizeof(u32));
+    if (tabla_M == NULL)
+        goto error_tabla_M;
+
     u32* tabla_m = calloc(r, sizeof(u32));
+    if (tabla_m == NULL)
+        goto error_tabla_m;
+
     u32 max_M_mas_m = CompletarTablas(tabla_M, tabla_m, r, G);
 
     // Aquí estarán los colores en el orden x1, ..., xr
     color* orden_colores = calloc(r, sizeof(color));
+    if (orden_colores == NULL)
+        goto error_orden_colores;
 
     // las siguientes tablas deben tener espacio para los valores
     // del conjunto {0, ..., max_M_mas_m}
@@ -99,10 +107,16 @@ char GulDukat(Grafo G, u32* Orden)
 
     // tabla_cantidad_colores[i] tiene la cantidad de colores con M(x) == i
     u32* tabla_cantidad_colores = calloc(tam_tablas, sizeof(u32));
+    if (tabla_cantidad_colores == NULL)
+        goto error_tabla_cantidad_colores;
+
     ConstruirTablaCantColoresMul4(tabla_cantidad_colores, tabla_M, tam_tablas, r);
 
     // tabla_posiciones[i] tiene el índice del próx color con M(x) == i
     u32* tabla_posiciones = calloc(tam_tablas, sizeof(u32));
+    if (tabla_posiciones == NULL)
+        goto error_tabla_posiciones;
+
     ConstruirTablaPosiciones(tabla_posiciones, tabla_cantidad_colores, tam_tablas);
 
     for (color c = 4; c <= r; c += 4) {
@@ -115,7 +129,7 @@ char GulDukat(Grafo G, u32* Orden)
     u32 cantMul4 = r / 4;
     // tabla_cantidad_colores[i] tiene la cantidad de colores con M(x) + m(x) == i
     ConstruirTablaCantColoresPar(tabla_cantidad_colores, tabla_M, tabla_m, tam_tablas, r);
-    // actualizo tabla_posiciones con esta nueva tabla de colores
+    // construyo tabla_posiciones con esta nueva tabla de colores
     ConstruirTablaPosiciones(tabla_posiciones, tabla_cantidad_colores, tam_tablas);
     for (color c = 2; c <= r; c += 4) {
         u32 M_mas_m = tabla_M[c - 1] + tabla_m[c - 1];
@@ -128,7 +142,7 @@ char GulDukat(Grafo G, u32* Orden)
     u32 cantPares = r / 2;
     // tabla_cantidad_colores[i] tiene la cantidad de colores con m(x) == i
     ConstruirTablaCantColoresImpar(tabla_cantidad_colores, tabla_m, tam_tablas, r);
-    // actualizo tabla_posiciones con esta nueva tabla de colores
+    // construyo tabla_posiciones con esta nueva tabla de colores
     ConstruirTablaPosiciones(tabla_posiciones, tabla_cantidad_colores, tam_tablas);
 
     for (color c = 1; c <= r; c += 2) {
@@ -141,11 +155,18 @@ char GulDukat(Grafo G, u32* Orden)
 
     OrdenarVerticesEnBloques(Orden, orden_colores, r, G);
 
-    free(orden_colores);
-    free(tabla_cantidad_colores);
-    free(tabla_posiciones);
-    free(tabla_M);
-    free(tabla_m);
+    rc = 0;
 
-    return error;
+error_tabla_posiciones:
+    free(tabla_posiciones);
+error_tabla_cantidad_colores:
+    free(tabla_cantidad_colores);
+error_orden_colores:
+    free(orden_colores);
+error_tabla_m:
+    free(tabla_m);
+error_tabla_M:
+    free(tabla_M);
+
+    return rc;
 }
