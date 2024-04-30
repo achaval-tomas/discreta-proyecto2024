@@ -44,7 +44,7 @@ DEF_DEBUG_EXECUTABLE=$(word 1,$(DEBUG_EXECUTABLES))
 DEF_SANITIZE_EXECUTABLE=$(word 1,$(SANITIZE_EXECUTABLES))
 DEF_RELEASE_EXECUTABLE=$(word 1,$(RELEASE_EXECUTABLES))
 
-# Se puede cambiar el archivo usando 'make run i=grafo.txt'
+# Se puede cambiar el archivo usando 'make run g=grafo.txt'
 g?=K5.txt
 iters?=
 
