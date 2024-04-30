@@ -49,7 +49,7 @@ color CalcularMaxColor(Grafo G)
 char ChequearOrden(u32* Orden, u32 n)
 {
     char* found_flags = calloc(n, sizeof(char));
-    if (found_flags == NULL) 
+    if (found_flags == NULL)
         return 0;
 
     int is_valid = 1;

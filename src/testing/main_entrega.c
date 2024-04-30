@@ -67,7 +67,7 @@ u32 CorrerIteracionesRandom(Grafo g, u32* orden)
         }
 
         printf("\tCantidad de colores luego de %s: %u\n"
-                 ,random ? "GulDukat" : "ElimGarak",ncolores);
+                , random ? "GulDukat" : "ElimGarak", ncolores);
         fflush(stdout);
     }
 
