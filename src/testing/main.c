@@ -1,4 +1,5 @@
 #include "API2024Parte2.h"
+#include "Util.h"
 #include <stdio.h>
 
 void ImprimirGrafo(Grafo g)
@@ -80,6 +81,8 @@ int main(int argc, char* argv[])
     for (u32 i = 0; i < iters; ++i) {
         if (GulDukat(grafo, orden))
             printf("Algo salió mal.");
+        if (!ChequearGulDukat(grafo, orden))
+            printf("TODO MAL CON GULDUKAT");
         cols = Greedy(grafo, orden);
     }
     printf("Colores Utilizados después de %u GulDukat: %u\n", iters, cols);
