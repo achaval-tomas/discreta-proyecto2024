@@ -75,3 +75,11 @@ ${RELEASE_TARGETS}: release_%: $(RELEASE_DIR)/%
 win:
 	gcc -Wall -Werror -Wextra -std=c99 -O3 -o test src/api/*.c src/testing/main_entrega.c -I src/api
 	test < ${g}
+
+test:
+	make run_main_entrega g=K3.txt
+	make sanitize_main_entrega g=K3.txt
+	make run_main_entrega g=K4.txt
+	make sanitize_main_entrega g=K4.txt
+	make run_main_entrega g=K5.txt
+	make sanitize_main_entrega g=K5.txt
