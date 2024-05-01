@@ -4,15 +4,15 @@
 #include "Sort.h"
 #include <assert.h>
 
+// Returns 0 if successful, 1 otherwise
 char OrdenarVerticesEnBloques(u32* Orden, u32* orden_bloques, u32 r, Grafo G)
 {
-    char res = 0;
+    char res = 1;
+
     u32 n = NumeroDeVertices(G);
     u32* orden_bloques_inv = calloc(r, sizeof(u32));
-    if (orden_bloques_inv == NULL){
-        res = 1;
+    if (orden_bloques_inv == NULL)
         goto error_calloc;
-    }
 
     // x1, ..., xr permutación de los colores 1, ..., r
     // orden_bloques[ x_c - 1 ] = c
@@ -22,7 +22,7 @@ char OrdenarVerticesEnBloques(u32* Orden, u32* orden_bloques, u32 r, Grafo G)
         orden_bloques_inv[c - 1] = i;
     }
 
-    for (u32 i = 0; i<n; ++i)
+    for (u32 i = 0; i < n; ++i)
         Orden[i] = i;
 
     LINEAR_SORT(res, Orden, n, r, vert, x_c, {

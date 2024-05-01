@@ -56,7 +56,7 @@ static char OrdenarColoresPorCardinalidadVerElimGarak(Grafo G, u32 r, u32* orden
 }
 
 char ElimGarak(Grafo G, u32* Orden)
-{   
+{
     char res = 1;
     u32 r = CalcularMaxColor(G);
 
@@ -66,8 +66,8 @@ char ElimGarak(Grafo G, u32* Orden)
 
     if (OrdenarColoresPorCardinalidadVerElimGarak(G, r, orden_colores) != 0)
         goto error;
-    
-    if (OrdenarVerticesEnBloques(Orden, orden_colores, r, G))
+
+    if (OrdenarVerticesEnBloques(Orden, orden_colores, r, G) != 0)
         goto error;
 
     res = 0;
