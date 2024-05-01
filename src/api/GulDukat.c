@@ -1,12 +1,10 @@
 #include "API2024Parte2.h"
+#include "Math.h"
 #include "Sort.h"
 #include "Util.h"
 #include <assert.h>
 #include <stdio.h>
 #include <string.h>
-
-#define MAX(x, y) (((x) > (y)) ? (x) : (y))
-#define MIN(x, y) (((x) < (y)) ? (x) : (y))
 
 /*
 Asume que tabla_M y tabla_m apuntan c/u a una region de memoria con r lugares.
