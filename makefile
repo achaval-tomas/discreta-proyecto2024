@@ -76,7 +76,7 @@ win:
 	gcc -Wall -Werror -Wextra -std=c99 -O3 -o test src/api/*.c src/testing/main_entrega.c -I src/api
 	test < ${g}
 
-test:
+test: ${BUILD_DIR}/release/main_entrega
 	make run_main_entrega g=K3.txt
 	make sanitize_main_entrega g=K3.txt
 	make run_main_entrega g=K4.txt
