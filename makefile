@@ -3,7 +3,7 @@ MAIN_FILES=main.c test_sort.c test_elim_garak.c test_gul_dukat.c main_entrega.c
 
 COMMON_ARGS=-Wall -Wextra -Werror -std=c99
 DEBUG_ARGS=-g
-SANITIZE_ARGS=-fsanitize=address,undefined
+SANITIZE_ARGS=-g -fsanitize=address,undefined
 RELEASE_ARGS=-O3
 VALGRIND_OPTIONS=--leak-check=full --show-leak-kinds=all --track-origins=yes --quiet
 
