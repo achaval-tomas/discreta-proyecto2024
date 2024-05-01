@@ -45,29 +45,33 @@ u32 CorrerIteracionesRandom(Grafo g, u32* orden)
     u32 ncolores;
 
     for (u32 i = 0; i < 500; i++) {
-        // 50% random = 1, 50% random = 0
-        char random = ((rand() % 2) == 0);
-        if (random) {
+        if (rand() % 2 == 0) {
             if (GulDukat(g, orden)) {
                 printf("Error GulDukat\n");
                 exit(EXIT_FAILURE);
             }
 
+            ncolores = Greedy(g, orden);
+            if (ncolores == UINT32_MAX) {
+                printf("Error Greedy\n");
+                exit(EXIT_FAILURE);
+            }
+
+            printf("\tCantidad de colores luego de GulDukat: %u\n", ncolores);
         } else {
             if (ElimGarak(g, orden)) {
                 printf("Error ElimGarak\n");
                 exit(EXIT_FAILURE);
             }
-        }
 
-        ncolores = Greedy(g, orden);
-        if (ncolores == UINT32_MAX) {
-            printf("Error Greedy\n");
-            exit(EXIT_FAILURE);
-        }
+            ncolores = Greedy(g, orden);
+            if (ncolores == UINT32_MAX) {
+                printf("Error Greedy\n");
+                exit(EXIT_FAILURE);
+            }
 
-        printf("\tCantidad de colores luego de %s: %u\n"
-                , random ? "GulDukat" : "ElimGarak", ncolores);
+            printf("\tCantidad de colores luego de ElimGarak: %u\n", ncolores);
+        }
         fflush(stdout);
     }
 
