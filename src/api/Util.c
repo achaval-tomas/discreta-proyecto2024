@@ -1,39 +1,38 @@
 #include "Util.h"
 #include "APIG24.h"
 #include "Math.h"
+#include "Sort.h"
 #include <assert.h>
 
-void OrdenarVerticesEnBloques(u32* Orden, u32* orden_bloques, u32 r, Grafo G)
+char OrdenarVerticesEnBloques(u32* Orden, u32* orden_bloques, u32 r, Grafo G)
 {
+    char res = 0;
     u32 n = NumeroDeVertices(G);
-
-    // indices[c-1] tendrá el próximo indice en el cuál
-    // se debe colocar un vértice del color c.
-    u32* indices = calloc(r, sizeof(u32));
-
-    // vert_por_color[c-1] contiene la cantidad de vertices
-    // coloreados con el color c.
-    u32* vert_por_color = calloc(r, sizeof(u32));
-    for (u32 i = 0; i < n; ++i)
-        vert_por_color[Color(i, G) - 1] += 1;
-
-    // utilizamos el orden de los bloques de colores
-    // llenar indices[] acorde a su definición.
-    u32 acum = 0;
-    for (u32 i = 0; i < r; ++i) {
-        color c = orden_bloques[i];
-        indices[c - 1] = acum;
-        acum += vert_por_color[c - 1];
+    u32* orden_bloques_inv = calloc(r, sizeof(u32));
+    if (orden_bloques_inv == NULL){
+        res = 1;
+        goto error_calloc;
     }
 
-    for (u32 i = 0; i < n; ++i) {
-        // se guarda indice actual, luego se incrementa en 1.
-        u32 ind = indices[Color(i, G) - 1]++;
-        Orden[ind] = i;
+    // x1, ..., xr permutación de los colores 1, ..., r
+    // orden_bloques[ x_c - 1 ] = c
+    // orden_bloques_inv[ c - 1 ] = x_c
+    for (u32 i = 1; i <= r; ++i) {
+        color c = orden_bloques[i - 1];
+        orden_bloques_inv[c - 1] = i;
     }
 
-    free(indices);
-    free(vert_por_color);
+    for (u32 i = 0; i<n; ++i)
+        Orden[i] = i;
+
+    LINEAR_SORT(res, Orden, n, r, vert, x_c, {
+        // mapeamos cada vertice al orden de su color
+        x_c = orden_bloques_inv[Color(vert, G) - 1];
+    })
+
+error_calloc:
+    free(orden_bloques_inv);
+    return res;
 }
 
 color CalcularMaxColor(Grafo G)

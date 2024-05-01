@@ -96,7 +96,8 @@ char GulDukat(Grafo G, u32* Orden)
     if (res)
         goto error;
 
-    OrdenarVerticesEnBloques(Orden, orden_colores, r, G);
+    if (OrdenarVerticesEnBloques(Orden, orden_colores, r, G))
+        goto error;
 
     rc = 0;
 

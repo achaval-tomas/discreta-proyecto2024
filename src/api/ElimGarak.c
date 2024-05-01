@@ -66,8 +66,9 @@ char ElimGarak(Grafo G, u32* Orden)
 
     if (OrdenarColoresPorCardinalidadVerElimGarak(G, r, orden_colores) != 0)
         goto error;
-    // TODO: chequear esto
-    OrdenarVerticesEnBloques(Orden, orden_colores, r, G);
+    
+    if (OrdenarVerticesEnBloques(Orden, orden_colores, r, G))
+        goto error;
 
     res = 0;
 
