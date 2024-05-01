@@ -69,7 +69,7 @@ char GulDukat(Grafo G, u32* Orden)
         orden_colores[i] = c;
     u32 cantImpares = r - cantMul4 - cantParesNoMul4;
 
-    int res = 0;
+    char res = 0;
     LINEAR_SORT(res, orden_colores, cantMul4, max_M_mas_m, c, val, {
         // Mapeamos el color c al máximo - M(c) para que el orden
         // sea de mayor a menor
@@ -96,7 +96,7 @@ char GulDukat(Grafo G, u32* Orden)
     if (res)
         goto error;
 
-    if (OrdenarVerticesEnBloques(Orden, orden_colores, r, G))
+    if (OrdenarVerticesEnBloques(Orden, orden_colores, r, G) != 0)
         goto error;
 
     rc = 0;
