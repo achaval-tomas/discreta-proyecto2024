@@ -146,14 +146,6 @@ int main(void)
     for (u32 i = 0; i < NCASOS; i++) {
         printf("\n\nCaso %u:\n", i + 1);
 
-        // for (u32 j = 0; j < n; j++)
-        //     printf("\t%u", ordenes[i][j]);
-        // printf("\n");
-
-        // for (u32 j = 0; j < n; j++)
-        //     printf("\t%u", Grado(ordenes[i][j], g));
-        // printf("\n");
-
         // Greedy inicial
         u32 ncolores = Greedy(g, ordenes[i]);
         printf("\tCantidad de colores luego del Greedy inicial: %u\n", ncolores);
@@ -161,7 +153,7 @@ int main(void)
         // Iteraciones
         cant_colores[i] = CorrerIteraciones(g, ordenes[i]);
         ExtraerColores(g, colores[i]);
-        printf("\tCantidad de colores luego de todas las iteraciones: %u\n", cant_colores[i]);
+        printf("\tCantidad de colores luego de todas las iteraciones (caso %u): %u\n", i + 1, cant_colores[i]);
     }
 
     u32 mejor_caso = 0;
@@ -174,7 +166,7 @@ int main(void)
     printf("\n\nEl mejor caso fue %u:\n", mejor_caso + 1);
     ImportarColores(colores[mejor_caso], g);
     u32 ncolores = CorrerIteracionesRandom(g, ordenes[mejor_caso]);
-    printf("\tCantidad de colores luego de todas las iteraciones: %u\n", ncolores);
+    printf("\tCantidad de colores luego de todas las iteraciones (mejor caso = %u): %u\n", mejor_caso + 1, ncolores);
 
     for (u32 i = 0; i < NCASOS; i++) {
         free(colores[i]);
