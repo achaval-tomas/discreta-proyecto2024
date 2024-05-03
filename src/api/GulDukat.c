@@ -1,11 +1,10 @@
 #include "API2024Parte2.h"
+#include "Math.h"
+#include "Sort.h"
 #include "Util.h"
 #include <assert.h>
 #include <stdio.h>
 #include <string.h>
-
-#define MAX(x, y) (((x) > (y)) ? (x) : (y))
-#define MIN(x, y) (((x) < (y)) ? (x) : (y))
 
 /*
 Asume que tabla_M y tabla_m apuntan c/u a una region de memoria con r lugares.
@@ -33,119 +32,80 @@ static u32 CompletarTablas(u32* tabla_M, u32* tabla_m, u32 r, Grafo G)
     return max_sum;
 }
 
-static void ConstruirTablaCantColoresMul4(u32* tabla_cant_colores, u32* tabla_M, u32 tam, u32 r)
-{
-    memset(tabla_cant_colores, 0, tam * sizeof(u32));
-
-    color mul4 = 4;
-    while (mul4 <= r) {
-        u32 M = tabla_M[mul4 - 1];
-        tabla_cant_colores[M] += 1;
-        mul4 += 4;
-    }
-}
-
-static void ConstruirTablaCantColoresPar(u32* tabla_cant_colores, u32* tabla_M, u32* tabla_m, u32 tam, u32 r)
-{
-    memset(tabla_cant_colores, 0, tam * sizeof(u32));
-
-    color par = 2;
-    while (par <= r) {
-        u32 M_mas_m = tabla_M[par - 1] + tabla_m[par - 1];
-        tabla_cant_colores[M_mas_m] += 1;
-        par += 4;
-    }
-}
-
-static void ConstruirTablaCantColoresImpar(u32* tabla_cant_colores, u32* tabla_m, u32 tam, u32 r)
-{
-    memset(tabla_cant_colores, 0, tam * sizeof(u32));
-
-    color impar = 1;
-    while (impar <= r) {
-        u32 m = tabla_m[impar - 1];
-        tabla_cant_colores[m] += 1;
-        impar += 2;
-    }
-}
-
-static void ConstruirTablaPosiciones(u32* tabla_posiciones, u32* tabla_cantidad, u32 tam)
-{
-    tabla_posiciones[tam - 1] = 0;
-    u32 i = tam - 1;
-    while (i != 0) {
-        --i;
-        tabla_posiciones[i] = tabla_posiciones[i + 1] + tabla_cantidad[i + 1];
-    }
-}
-
 char GulDukat(Grafo G, u32* Orden)
 {
-    char error = 0;
+    char rc = 1;
     color r = CalcularMaxColor(G);
-    
+
     // tabla_M[i] = M(i+1) = máx{Grado(j, G) : Color(j, G) == i+1}
     // tabla_m[i] = m(i+1) = min{Grado(j, G) : Color(j, G) == i+1}
     u32* tabla_M = calloc(r, sizeof(u32));
+    if (tabla_M == NULL)
+        goto error_tabla_M;
+
     u32* tabla_m = calloc(r, sizeof(u32));
+    if (tabla_m == NULL)
+        goto error_tabla_m;
+
     u32 max_M_mas_m = CompletarTablas(tabla_M, tabla_m, r, G);
 
     // Aquí estarán los colores en el orden x1, ..., xr
     color* orden_colores = calloc(r, sizeof(color));
+    if (orden_colores == NULL)
+        goto error_orden_colores;
 
-    // las siguientes tablas deben tener espacio para los valores
-    // del conjunto {0, ..., max_M_mas_m}
-    u32 tam_tablas = max_M_mas_m + 1;
+    u32 i = 0;
+    for (color c = 4; c <= r; c += 4, ++i)
+        orden_colores[i] = c;
+    u32 cantMul4 = i;
 
-    // tabla_cantidad_colores[i] tiene la cantidad de colores con M(x) == i
-    u32* tabla_cantidad_colores = calloc(tam_tablas, sizeof(u32));
-    ConstruirTablaCantColoresMul4(tabla_cantidad_colores, tabla_M, tam_tablas, r);
+    for (color c = 2; c <= r; c += 4, ++i)
+        orden_colores[i] = c;
+    u32 cantParesNoMul4 = i - cantMul4;
 
-    // tabla_posiciones[i] tiene el índice del próx color con M(x) == i
-    u32* tabla_posiciones = calloc(tam_tablas, sizeof(u32));
-    ConstruirTablaPosiciones(tabla_posiciones, tabla_cantidad_colores, tam_tablas);
+    for (color c = 1; c <= r; c += 2, ++i)
+        orden_colores[i] = c;
+    u32 cantImpares = r - cantMul4 - cantParesNoMul4;
 
-    for (color c = 4; c <= r; c += 4) {
-        u32 M = tabla_M[c - 1];
-        u32 pos = tabla_posiciones[M];
-        orden_colores[pos] = c;
-        tabla_posiciones[M] += 1;
-    }
+    char res = 0;
+    LINEAR_SORT(res, orden_colores, cantMul4, max_M_mas_m, c, val, {
+        // Mapeamos el color c al máximo - M(c) para que el orden
+        // sea de mayor a menor
+        val = max_M_mas_m - tabla_M[c - 1];
+    });
+    if (res)
+        goto error;
 
-    u32 cantMul4 = r / 4;
-    // tabla_cantidad_colores[i] tiene la cantidad de colores con M(x) + m(x) == i
-    ConstruirTablaCantColoresPar(tabla_cantidad_colores, tabla_M, tabla_m, tam_tablas, r);
-    // actualizo tabla_posiciones con esta nueva tabla de colores
-    ConstruirTablaPosiciones(tabla_posiciones, tabla_cantidad_colores, tam_tablas);
-    for (color c = 2; c <= r; c += 4) {
-        u32 M_mas_m = tabla_M[c - 1] + tabla_m[c - 1];
-        u32 pos = tabla_posiciones[M_mas_m];
-        // sumo la cantidad de colores múltiplos de 4 porque estos están antes en el orden
-        orden_colores[pos + cantMul4] = c;
-        tabla_posiciones[M_mas_m] += 1;
-    }
+    // Ordena los colores desde el índice cantMul4 (los anteriores ya están ordenados)
+    LINEAR_SORT(res, orden_colores + (cantMul4), cantParesNoMul4, max_M_mas_m, c, val, {
+        // Mapeamos el color c al máximo - M(c) - m(c) para que el orden
+        // sea de mayor a menor
+        val = max_M_mas_m - (tabla_M[c - 1] + tabla_m[c - 1]);
+    });
+    if (res)
+        goto error;
 
-    u32 cantPares = r / 2;
-    // tabla_cantidad_colores[i] tiene la cantidad de colores con m(x) == i
-    ConstruirTablaCantColoresImpar(tabla_cantidad_colores, tabla_m, tam_tablas, r);
-    // actualizo tabla_posiciones con esta nueva tabla de colores
-    ConstruirTablaPosiciones(tabla_posiciones, tabla_cantidad_colores, tam_tablas);
+    // Ordena los colores desde el índice (cantMul4 + cantParesNoMul4)
+    LINEAR_SORT(res, orden_colores + (cantMul4 + cantParesNoMul4), cantImpares, max_M_mas_m, c, val, {
+        // Mapeamos el color c al máximo - m(c) para que el orden
+        // sea de mayor a menor
+        val = max_M_mas_m - (tabla_m[c - 1]);
+    });
+    if (res)
+        goto error;
 
-    for (color c = 1; c <= r; c += 2) {
-        u32 m = tabla_m[c - 1];
-        u32 pos = tabla_posiciones[m];
-        // sumo la cantidad de colores pares porque estos están antes en el orden
-        orden_colores[pos + cantPares] = c;
-        tabla_posiciones[m] += 1;
-    }
+    if (OrdenarVerticesEnBloques(Orden, orden_colores, r, G) != 0)
+        goto error;
 
-    OrdenarVerticesEnBloques(Orden, orden_colores, r, G);
+    rc = 0;
 
+error:
+error_orden_colores:
     free(orden_colores);
-    free(tabla_cantidad_colores);
-    free(tabla_posiciones);
-    free(tabla_M);
+error_tabla_m:
     free(tabla_m);
+error_tabla_M:
+    free(tabla_M);
 
-    return error;
+    return rc;
 }

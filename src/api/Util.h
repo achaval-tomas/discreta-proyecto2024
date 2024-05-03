@@ -6,9 +6,10 @@
 /*
 Ordena los n vertices del grafo G por el orden de los colores en orden_bloques.
 Se asume que Orden tiene n lugares de memoria y orden_bloques r.
+Devuelve 0 en caso de éxito, 1 en caso contrario.
 Complejidad: O(n)
 */
-void OrdenarVerticesEnBloques(u32* Orden, u32* orden_bloques, u32 r, Grafo G);
+char OrdenarVerticesEnBloques(u32* Orden, u32* orden_bloques, u32 r, Grafo G);
 
 /*
 G debe ser un grafo previamente coloreado por Greedy.

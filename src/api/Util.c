@@ -1,31 +1,38 @@
 #include "Util.h"
-#include "APIG24.h"
+#include "API2024Parte2.h"
 #include "Math.h"
+#include "Sort.h"
 #include <assert.h>
 
-void OrdenarVerticesEnBloques(u32* Orden, u32* orden_bloques, u32 r, Grafo G)
+// Returns 0 if successful, 1 otherwise
+char OrdenarVerticesEnBloques(u32* Orden, u32* orden_bloques, u32 r, Grafo G)
 {
+    char res = 1;
+
     u32 n = NumeroDeVertices(G);
-    u32* indices = calloc(r, sizeof(u32));
-    u32* vert_por_color = calloc(r, sizeof(u32));
+    u32* orden_bloques_inv = calloc(r, sizeof(u32));
+    if (orden_bloques_inv == NULL)
+        goto error_calloc;
+
+    // x1, ..., xr permutación de los colores 1, ..., r
+    // orden_bloques[ x_c - 1 ] = c
+    // orden_bloques_inv[ c - 1 ] = x_c
+    for (u32 i = 1; i <= r; ++i) {
+        color c = orden_bloques[i - 1];
+        orden_bloques_inv[c - 1] = i;
+    }
 
     for (u32 i = 0; i < n; ++i)
-        vert_por_color[Color(i, G) - 1] += 1;
+        Orden[i] = i;
 
-    u32 acum = 0;
-    for (u32 i = 0; i < r; ++i) {
-        color c = orden_bloques[i];
-        indices[c - 1] = acum;
-        acum += vert_por_color[c - 1];
-    }
+    LINEAR_SORT(res, Orden, n, r, vert, x_c, {
+        // mapeamos cada vertice al orden de su color
+        x_c = orden_bloques_inv[Color(vert, G) - 1];
+    })
 
-    for (u32 i = 0; i < n; ++i) {
-        u32 ind = indices[Color(i, G) - 1]++;
-        Orden[ind] = i;
-    }
-
-    free(indices);
-    free(vert_por_color);
+error_calloc:
+    free(orden_bloques_inv);
+    return res;
 }
 
 color CalcularMaxColor(Grafo G)
@@ -41,6 +48,8 @@ color CalcularMaxColor(Grafo G)
 char ChequearOrden(u32* Orden, u32 n)
 {
     char* found_flags = calloc(n, sizeof(char));
+    if (found_flags == NULL)
+        return 0;
 
     int is_valid = 1;
     for (u32 i = 0; i < n; ++i) {
@@ -124,7 +133,6 @@ char ChequearGulDukat(Grafo G, u32* Orden)
     char mul4 = (r >= 4) ? 1 : 0;
     char even = (4 > r && r >= 2) ? 1 : 0;
     char odd = (r == 1) ? 1 : 0;
-
 
     for (u32 i = 0; i < n - 1; ++i) {
         u32 v0 = Orden[i];

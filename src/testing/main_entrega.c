@@ -1,49 +1,37 @@
 #include "API2024Parte2.h"
 #include <stdio.h>
 #include <time.h>
+#include <assert.h>
 #include "Sort.h"
 
 u32 CorrerIteraciones(Grafo g, u32* orden)
 {
     u32 ncolores;
-    clock_t start, end;
 
     for (u32 i = 0; i < 50; i++) {
-        start = clock();
         if (GulDukat(g, orden)) {
             printf("Error GulDukat\n");
             exit(EXIT_FAILURE);
         }
-        end = clock();
-        printf("\tGulDukat took: %fs\n", (float)(end - start) / CLOCKS_PER_SEC);
 
-        start = clock();
         ncolores = Greedy(g, orden);
         if (ncolores == UINT32_MAX) {
             printf("Error Greedy\n");
             exit(EXIT_FAILURE);
         }
-        end = clock();
-        printf("\tGreedy took: %fs\n", (float)(end - start) / CLOCKS_PER_SEC);
 
         printf("\tCantidad de colores luego de GulDukat: %u\n", ncolores);
 
-        start = clock();
         if (ElimGarak(g, orden)) {
             printf("Error ElimGarak\n");
             exit(EXIT_FAILURE);
         }
-        end = clock();
-        printf("\tElimGarak took: %fs\n", (float)(end - start) / CLOCKS_PER_SEC);
 
-        start = clock();
         ncolores = Greedy(g, orden);
         if (ncolores == UINT32_MAX) {
             printf("Error Greedy\n");
             exit(EXIT_FAILURE);
         }
-        end = clock();
-        printf("\tGreedy took: %fs\n", (float)(end - start) / CLOCKS_PER_SEC);
 
         printf("\tCantidad de colores luego de ElimGarak: %u\n", ncolores);
         fflush(stdout);
@@ -138,9 +126,11 @@ int main(void)
     { // Cuarto caso: vertices por su grado decreciente.
         u32 delta = Delta(g);
 
-        LINEAR_SORT(ordenes[3], n, delta, v, d, {
+        int res;
+        LINEAR_SORT(res, ordenes[3], n, delta, v, d, {
             d = delta - Grado(v, g);
         });
+        assert(res == 0);
     }
 
     { // Quinto caso: orden cocktail (0, n-1, 1, n-2, 2, n-3, ...).
@@ -156,14 +146,6 @@ int main(void)
     for (u32 i = 0; i < NCASOS; i++) {
         printf("\n\nCaso %u:\n", i + 1);
 
-        // for (u32 j = 0; j < n; j++)
-        //     printf("\t%u", ordenes[i][j]);
-        // printf("\n");
-
-        // for (u32 j = 0; j < n; j++)
-        //     printf("\t%u", Grado(ordenes[i][j], g));
-        // printf("\n");
-
         // Greedy inicial
         u32 ncolores = Greedy(g, ordenes[i]);
         printf("\tCantidad de colores luego del Greedy inicial: %u\n", ncolores);
@@ -171,7 +153,7 @@ int main(void)
         // Iteraciones
         cant_colores[i] = CorrerIteraciones(g, ordenes[i]);
         ExtraerColores(g, colores[i]);
-        printf("\tCantidad de colores luego de todas las iteraciones: %u\n", cant_colores[i]);
+        printf("\tCantidad de colores luego de todas las iteraciones (caso %u): %u\n", i + 1, cant_colores[i]);
     }
 
     u32 mejor_caso = 0;
@@ -184,7 +166,7 @@ int main(void)
     printf("\n\nEl mejor caso fue %u:\n", mejor_caso + 1);
     ImportarColores(colores[mejor_caso], g);
     u32 ncolores = CorrerIteracionesRandom(g, ordenes[mejor_caso]);
-    printf("\tCantidad de colores luego de todas las iteraciones: %u\n", ncolores);
+    printf("\tCantidad de colores luego de todas las iteraciones (mejor caso = %u): %u\n", mejor_caso + 1, ncolores);
 
     for (u32 i = 0; i < NCASOS; i++) {
         free(colores[i]);

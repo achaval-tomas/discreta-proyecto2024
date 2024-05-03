@@ -3,7 +3,7 @@ MAIN_FILES=main.c test_sort.c test_elim_garak.c test_gul_dukat.c main_entrega.c
 
 COMMON_ARGS=-Wall -Wextra -Werror -std=c99
 DEBUG_ARGS=-g
-SANITIZE_ARGS=-fsanitize=address,undefined
+SANITIZE_ARGS=-g -fsanitize=address,undefined
 RELEASE_ARGS=-O3
 VALGRIND_OPTIONS=--leak-check=full --show-leak-kinds=all --track-origins=yes --quiet
 
@@ -44,7 +44,7 @@ DEF_DEBUG_EXECUTABLE=$(word 1,$(DEBUG_EXECUTABLES))
 DEF_SANITIZE_EXECUTABLE=$(word 1,$(SANITIZE_EXECUTABLES))
 DEF_RELEASE_EXECUTABLE=$(word 1,$(RELEASE_EXECUTABLES))
 
-# Se puede cambiar el archivo usando 'make run i=grafo.txt'
+# Se puede cambiar el archivo usando 'make run g=grafo.txt'
 g?=K5.txt
 iters?=
 
@@ -71,3 +71,15 @@ ${SANITIZE_TARGETS}: sanitize_%: $(SANITIZE_DIR)/%
 
 ${RELEASE_TARGETS}: release_%: $(RELEASE_DIR)/%
 	./$< ${iters} < ${g}
+
+win:
+	gcc -Wall -Werror -Wextra -std=c99 -O3 -o test src/api/*.c src/testing/main_entrega.c -I src/api
+	test < ${g}
+
+test: ${BUILD_DIR}/release/main_entrega
+	make run_main_entrega g=K3.txt
+	make sanitize_main_entrega g=K3.txt
+	make run_main_entrega g=K4.txt
+	make sanitize_main_entrega g=K4.txt
+	make run_main_entrega g=K5.txt
+	make sanitize_main_entrega g=K5.txt
