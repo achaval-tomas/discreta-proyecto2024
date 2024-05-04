@@ -7,31 +7,44 @@
 u32 CorrerIteraciones(Grafo g, u32* orden)
 {
     u32 ncolores;
+    clock_t start, end;
 
     for (u32 i = 0; i < 50; i++) {
+        start = clock();
         if (GulDukat(g, orden)) {
             printf("Error GulDukat\n");
             exit(EXIT_FAILURE);
         }
+        end = clock();
+        printf("\tGulDukat took: %fs\n", (float)(end - start) / CLOCKS_PER_SEC);
 
+        start = clock();
         ncolores = Greedy(g, orden);
         if (ncolores == UINT32_MAX) {
             printf("Error Greedy\n");
             exit(EXIT_FAILURE);
         }
+        end = clock();
+        printf("\tGreedy took: %fs\n", (float)(end - start) / CLOCKS_PER_SEC);
 
         printf("\tCantidad de colores luego de GulDukat: %u\n", ncolores);
 
+        start = clock();
         if (ElimGarak(g, orden)) {
             printf("Error ElimGarak\n");
             exit(EXIT_FAILURE);
         }
+        end = clock();
+        printf("\tElimGarak took: %fs\n", (float)(end - start) / CLOCKS_PER_SEC);
 
+        start = clock();
         ncolores = Greedy(g, orden);
         if (ncolores == UINT32_MAX) {
             printf("Error Greedy\n");
             exit(EXIT_FAILURE);
         }
+        end = clock();
+        printf("\tGreedy took: %fs\n", (float)(end - start) / CLOCKS_PER_SEC);
 
         printf("\tCantidad de colores luego de ElimGarak: %u\n", ncolores);
         fflush(stdout);
